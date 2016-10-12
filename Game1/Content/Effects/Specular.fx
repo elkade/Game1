@@ -7,14 +7,16 @@ float AmbientIntensity = 0.1;
 
 float4x4 WorldInverseTranspose;
 
-float3 DiffuseLightDirection = float3(1, 0, 0);
+float3 LightPosition;
+
+float3 DiffuseLightDirection;
 float4 DiffuseColor = float4(1, 1, 1, 1);
 float DiffuseIntensity = 1.0;
 
 float Shininess = 200;
 float4 SpecularColor = float4(1, 1, 1, 1);
 float SpecularIntensity = 1;
-float3 ViewVector = float3(1, 0, 0);
+float3 ViewVector = float3(0, 1, 0);
 
 struct VertexShaderInput
 {
@@ -34,6 +36,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	VertexShaderOutput output;
 
 	float4 worldPosition = mul(input.Position, World);
+	DiffuseLightDirection = normalize(-worldPosition + LightPosition);
 	float4 viewPosition = mul(worldPosition, View);
 	output.Position = mul(viewPosition, Projection);
 

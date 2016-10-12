@@ -10,29 +10,42 @@ namespace Game1
         // in the ProjectionMatrix property.
         GraphicsDevice graphicsDevice;
 
-        public Vector3 Position = new Vector3(0, 3, 3);
-        public Camera()
-        {
-            previousScrollValue = Mouse.GetState().ScrollWheelValue;
-        }
-        float angleZ;
-        float angleX;
+        public Vector3 ViewVector { get
+            {
+                var viewVector = Target - Position;
+                viewVector.Normalize();
+                return viewVector;
+            } }
 
+        public Vector3 Position = new Vector3(0, 25, 0);
+
+        public Vector3 Target
+        {
+            get {
+                Vector3 lookAtVector = new Vector3(0, -1, 0);
+
+                // Then we'll modify the vector using this matrix:
+                lookAtVector = Vector3.Transform(lookAtVector, RotationMatrix);
+                lookAtVector += Position;
+                lookAtVector.Normalize();
+                return lookAtVector;
+            }
+        }
+
+        public Matrix RotationMatrix;
         public Matrix ViewMatrix
         {
             get
             {
-                var lookAtVector = new Vector3(0, -1, -.5f);
-                // We'll create a rotation matrix using our angle
-                var rotationMatrix = Matrix.CreateRotationZ(angleZ) * Matrix.CreateRotationX(angleX);
+                Vector3 lookAtVector = new Vector3(0, -1, 0);
+
                 // Then we'll modify the vector using this matrix:
-                lookAtVector = Vector3.Transform(lookAtVector, rotationMatrix);
+                lookAtVector = Vector3.Transform(lookAtVector, RotationMatrix);
                 lookAtVector += Position;
 
                 var upVector = Vector3.UnitZ;
 
-                return Matrix.CreateLookAt(
-                    Position, lookAtVector, upVector);
+                return Matrix.CreateLookAt(Position, lookAtVector, upVector);
             }
         }
 
@@ -40,28 +53,33 @@ namespace Game1
         {
             get
             {
-                float fieldOfView = Microsoft.Xna.Framework.MathHelper.PiOver4;
+                float fieldOfView = MathHelper.PiOver4;
                 float nearClipPlane = 1;
                 float farClipPlane = 200;
                 float aspectRatio = graphicsDevice.Viewport.Width / (float)graphicsDevice.Viewport.Height;
 
-                return Matrix.CreatePerspectiveFieldOfView(
-                    fieldOfView, aspectRatio, nearClipPlane, farClipPlane);
+                return Matrix.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearClipPlane, farClipPlane);
             }
         }
 
         public Camera(GraphicsDevice graphicsDevice)
         {
+            previousScrollValue = Mouse.GetState().ScrollWheelValue;
             this.graphicsDevice = graphicsDevice;
+            RotationMatrix = Matrix.Identity;
         }
 
         public void Update(GameTime gameTime)
         {
+            Vector3 rotation = new Vector3(0, 0, 0);
+
             int positionX = 0;
             int positionY = 0;
             int positionZ = 0;
 
             var mouseState = Mouse.GetState();
+            var keyboardState = Keyboard.GetState();
+
             if (mouseState.ScrollWheelValue < previousScrollValue)
             {
                 positionY += 3;
@@ -72,7 +90,6 @@ namespace Game1
             }
             previousScrollValue = mouseState.ScrollWheelValue;
 
-            KeyboardState keyboardState = Keyboard.GetState();
 
 
             if (keyboardState.IsKeyDown(Keys.Right))
@@ -86,44 +103,51 @@ namespace Game1
 
             var forwardVector = new Vector3(positionX, positionY, positionZ);
 
-            var rotationMatrix = Matrix.CreateRotationZ(angleZ);
-            forwardVector = Vector3.Transform(forwardVector, rotationMatrix);
+
 
             const float unitsPerSecond = 10;
 
+
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+
+                var xPosition = mouseState.X;
+                float xRatio = xPosition / (float)graphicsDevice.Viewport.Width;
+
+                if (xRatio < 1 / 2.0f)
+                {
+                    rotation.Z = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                else if (xRatio < 2 / 3.0f)
+                {
+                }
+                else
+                {
+                    rotation.Z = -(float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+
+                var yPosition = mouseState.Y;
+                float yRatio = yPosition / (float)graphicsDevice.Viewport.Height;
+
+                if (yRatio < 1 / 2.0f)
+                {
+                    rotation.X = -(float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                else if (yRatio < 2 / 3.0f)
+                {
+                }
+                else
+                {
+                    rotation.X = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+            }
+
+            RotationMatrix *= Matrix.CreateRotationX(rotation.X) * Matrix.CreateRotationZ(rotation.Z);
+
+            forwardVector = Vector3.Transform(forwardVector, RotationMatrix);
+
             Position += forwardVector * unitsPerSecond * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (mouseState.LeftButton != ButtonState.Pressed)
-                return;
-            var xPosition = mouseState.X;
-            float xRatio = xPosition / (float)graphicsDevice.Viewport.Width;
-
-            if (xRatio < 1 / 2.0f)
-            {
-                angleZ += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
-            else if (xRatio < 2 / 3.0f)
-            {
-            }
-            else
-            {
-                angleZ -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
-
-            var yPosition = mouseState.Y;
-            float yRatio = yPosition / (float)graphicsDevice.Viewport.Height;
-
-            if (yRatio < 1 / 2.0f)
-            {
-                angleX -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
-            else if (yRatio < 2 / 3.0f)
-            {
-            }
-            else
-            {
-                angleX += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
 
         }
         private int previousScrollValue;

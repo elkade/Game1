@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Lighting.cs" />
     <Compile Include="Models\ConcaveCube.cs" />
     <Compile Include="Models\ConvexCube.cs" />
     <Compile Include="Models\CustomModel.cs" />
@@ -62,7 +63,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Effects\Specular.fx" />
-    <Content Include="Content\Effects\Ambient2.fx" />
     <Content Include="Content\Effects\Ambient.fx" />
     <Content Include="Content\Effects\Diffuse.fx" />
     <Content Include="Icon.ico" />

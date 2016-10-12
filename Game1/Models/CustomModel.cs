@@ -8,10 +8,10 @@ namespace Game1.Models
         public VertexPositionNormalTexture[] Vertices { get; set; }
         public Vector3 Position { get; protected set; }
 
-        public virtual void Draw(Effect effect, Camera camera, GraphicsDeviceManager graphics)
-        {
-            effect.Parameters["World"].SetValue(Matrix.CreateTranslation(Position));
+        public Matrix WorldMatrix { get { return Matrix.CreateTranslation(Position); } }
 
+        public virtual void Draw(Effect effect, GraphicsDeviceManager graphics)
+        {
             foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
