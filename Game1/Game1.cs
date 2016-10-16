@@ -53,16 +53,15 @@ namespace Game1
             specularEffect = Content.Load<Effect>("Effects/Specular");
             specularEffect.Parameters["AmbientColor"].SetValue(Color.White.ToVector4());
             specularEffect.Parameters["AmbientIntensity"].SetValue(0.1f);
-            specularEffect.Parameters["DiffuseLightDirection"].SetValue(new Vector3(-1, 0, 0));
-            specularEffect.Parameters["DiffuseColor"].SetValue(Color.White.ToVector4());
+            specularEffect.Parameters["DiffuseColor"].SetValue(Color.Yellow.ToVector4());
             specularEffect.Parameters["DiffuseIntensity"].SetValue(1.0f);
             specularEffect.Parameters["Shininess"].SetValue(200.0f);
-            specularEffect.Parameters["SpecularColor"].SetValue(Color.White.ToVector4());
+            specularEffect.Parameters["SpecularColor"].SetValue(Color.Green.ToVector4());
             specularEffect.Parameters["SpecularIntensity"].SetValue(1.0f);
 
 
 
-            lighting = new Lighting(specularEffect, new Vector3(3, 4, 1));
+            lighting = new Lighting(specularEffect, new Vector3(8,8,32));
 
             base.Initialize();
         }
@@ -76,9 +75,6 @@ namespace Game1
         {
             robot.Update(gameTime);
             camera.Update(gameTime);
-
-            viewVector = camera.Target - camera.Position;
-            viewVector.Normalize();
 
             lighting.Position = camera.Position;
 
