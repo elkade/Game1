@@ -12,33 +12,17 @@ namespace Game1
 
         public Vector3 Position = new Vector3(0, 25, 0);
 
-        public Vector3 Target
-        {
-            get {
-                Vector3 lookAtVector = new Vector3(0, -1, 0);
-
-                // Then we'll modify the vector using this matrix:
-                lookAtVector = Vector3.Transform(lookAtVector, RotationMatrix);
-                lookAtVector += Position;
-                lookAtVector.Normalize();
-                return lookAtVector;
-            }
-        }
-
         public Matrix RotationMatrix;
+
+        Vector3 lookAtVector { get { var lookat = Vector3.Transform( new Vector3(0, -1, 0), RotationMatrix); lookat.Normalize(); return lookat; } }
+
+        Vector3 rotation = new Vector3(0, 0, 0);
+
         public Matrix ViewMatrix
         {
             get
             {
-                Vector3 lookAtVector = new Vector3(0, -1, 0);
-
-                // Then we'll modify the vector using this matrix:
-                lookAtVector = Vector3.Transform(lookAtVector, RotationMatrix);
-                lookAtVector += Position;
-
-                var upVector = Vector3.UnitZ;
-
-                return Matrix.CreateLookAt(Position, lookAtVector, upVector);
+                return Matrix.CreateLookAt(Position, lookAtVector + Position, Vector3.UnitZ);
             }
         }
 
@@ -64,8 +48,6 @@ namespace Game1
 
         public void Update(GameTime gameTime)
         {
-            Vector3 rotation = new Vector3(0, 0, 0);
-
             int positionX = 0;
             int positionY = 0;
             int positionZ = 0;
@@ -109,14 +91,14 @@ namespace Game1
 
                 if (xRatio < 1 / 2.0f)
                 {
-                    rotation.Z = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    rotation.Z += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
                 else if (xRatio < 2 / 3.0f)
                 {
                 }
                 else
                 {
-                    rotation.Z = -(float)gameTime.ElapsedGameTime.TotalSeconds;
+                    rotation.Z += -(float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
 
                 var yPosition = mouseState.Y;
@@ -124,23 +106,22 @@ namespace Game1
 
                 if (yRatio < 1 / 2.0f)
                 {
-                    rotation.X = -(float)gameTime.ElapsedGameTime.TotalSeconds;
+                    rotation.X += -(float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
                 else if (yRatio < 2 / 3.0f)
                 {
                 }
                 else
                 {
-                    rotation.X = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    rotation.X += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
             }
 
-            RotationMatrix *= Matrix.CreateRotationX(rotation.X) * Matrix.CreateRotationZ(rotation.Z);
+            RotationMatrix = Matrix.CreateRotationX(rotation.X) * Matrix.CreateRotationZ(rotation.Z);
 
             forwardVector = Vector3.Transform(forwardVector, RotationMatrix);
 
             Position += forwardVector * unitsPerSecond * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
 
         }
         private int previousScrollValue;

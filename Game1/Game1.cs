@@ -74,7 +74,7 @@ namespace Game1
             robot.Update(gameTime);
             camera.Update(gameTime);
 
-            lighting.Position = camera.Position;
+            //lighting.Position = camera.Position;
 
             base.Update(gameTime);
         }

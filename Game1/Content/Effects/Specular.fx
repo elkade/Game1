@@ -28,8 +28,8 @@ struct VertexShaderOutput
 	float4 Position : SV_POSITION;
 	float4 Color : COLOR0;
 	float3 Normal : TEXCOORD0;
-	float3 Light : LIGHTCOORD0;
-	float3 Camera : CAMERACOORD0;
+	float3 Light : TEXCOORD1;
+	float3 Camera : TEXCOORD2;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
