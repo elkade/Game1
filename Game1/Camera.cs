@@ -10,13 +10,6 @@ namespace Game1
         // in the ProjectionMatrix property.
         GraphicsDevice graphicsDevice;
 
-        public Vector3 ViewVector { get
-            {
-                var viewVector = Target - Position;
-                viewVector.Normalize();
-                return viewVector;
-            } }
-
         public Vector3 Position = new Vector3(0, 25, 0);
 
         public Vector3 Target

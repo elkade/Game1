@@ -28,6 +28,8 @@ struct VertexShaderOutput
 	float4 Position : SV_POSITION;
 	float4 Color : COLOR0;
 	float3 Normal : TEXCOORD0;
+	float3 Light : LIGHTCOORD0;
+	float3 Camera : CAMERACOORD0;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
@@ -38,27 +40,30 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	float4 viewPosition = mul(worldPosition, View);
 	output.Position = mul(viewPosition, Projection);
 
-	float4 ambient = AmbientColor * AmbientIntensity;
+	float4 normal = normalize(mul(input.Normal, WorldInverseTranspose));
+	float3 lightDirection = normalize(LightPosition - worldPosition);
+	float lightIntensity = dot(normal.xyz, lightDirection);
+	output.Color = saturate(DiffuseColor * DiffuseIntensity * lightIntensity);
 
-	float3 l = -normalize(worldPosition - LightPosition);
-	float3 n = normalize(mul(input.Normal, WorldInverseTranspose));
+	output.Normal = normal.xyz;
 
-	float4 diffuse = dot(n.xyz, l) * DiffuseIntensity * DiffuseColor;
+	output.Light = lightDirection;
 
-	float3 r = normalize(2 * dot(l, n) * n - l);
-	float3 v = normalize(ViewVector);
-
-	float4 specular = SpecularIntensity * SpecularColor * max(pow(abs(dot(r, v)), Shininess), 0);
-
-	output.Color = saturate(ambient + diffuse + specular);//saturate(output.Color + AmbientColor * AmbientIntensity + specular);
-	output.Normal = n.xyz;
+	output.Camera = normalize(worldPosition - ViewVector);
 
 	return output;
 }
 
 float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET0
 {
-	return input.Color;
+	float3 normal = normalize(input.Normal);
+	float3 r = normalize(2 * dot(input.Light, normal) * normal - input.Light);
+	float3 v = input.Camera;
+
+	float dotProduct = dot(r, v);
+	float4 specular = SpecularIntensity * SpecularColor * max(pow(abs(dotProduct), Shininess), 0) * length(input.Color);
+
+	return saturate(input.Color + AmbientColor * AmbientIntensity + specular);
 }
 
 technique Specular

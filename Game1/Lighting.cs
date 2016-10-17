@@ -18,7 +18,7 @@ namespace Game1
             Effect.Parameters["World"].SetValue(world);
             Effect.Parameters["View"].SetValue(camera.ViewMatrix);
             Effect.Parameters["Projection"].SetValue(camera.ProjectionMatrix);
-            Effect.Parameters["ViewVector"].SetValue(camera.ViewVector);
+            Effect.Parameters["ViewVector"].SetValue(camera.Position);
             Effect.Parameters["LightPosition"].SetValue(Position);
 
             Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(world));
