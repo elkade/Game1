@@ -59,7 +59,7 @@ namespace Game1
 
 
 
-            lighting = new Lighting(specularEffect, new Vector3(0,5,8));
+            lighting = new Lighting(specularEffect, new Vector3(0,5,8), MathHelper.PiOver4);
 
             base.Initialize();
         }
@@ -74,7 +74,7 @@ namespace Game1
             robot.Update(gameTime);
             camera.Update(gameTime);
 
-            //lighting.Position = camera.Position;
+            lighting.Position = camera.Position;
 
             base.Update(gameTime);
         }
@@ -85,27 +85,15 @@ namespace Game1
             Effect effect;
             effect = lighting.UpdateEffect(walls.WorldMatrix, camera);
             walls.Draw(effect, graphics);
-            effect = lighting.UpdateEffect(platform1.WorldMatrix, camera);
-            platform1.Draw(effect, graphics);
-            effect = lighting.UpdateEffect(platform2.WorldMatrix, camera);
-            platform2.Draw(effect, graphics);
+            //effect = lighting.UpdateEffect(platform1.WorldMatrix, camera);
+            //platform1.Draw(effect, graphics);
+            //effect = lighting.UpdateEffect(platform2.WorldMatrix, camera);
+            //platform2.Draw(effect, graphics);
 
-            DrawModelWithSpecularEffect(robot.model, robot.GetWorldMatrix(), camera.ViewMatrix, camera.ProjectionMatrix);
+            robot.Draw(camera, lighting);
 
             base.Draw(gameTime);
         }
-
-
-        private void DrawModelWithSpecularEffect(Model model, Matrix world, Matrix view, Matrix projection)
-        {
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                foreach (ModelMeshPart part in mesh.MeshParts)
-                    part.Effect = lighting.UpdateEffect(world * mesh.ParentBone.Transform, camera);
-                mesh.Draw();
-            }
-        }
-
 
     }
 }

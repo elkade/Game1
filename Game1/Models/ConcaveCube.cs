@@ -16,7 +16,7 @@ namespace Game1.Models
 
             size /= 2;
 
-            int n = 100;
+            int n = 32;
 
             // Calculate the position of the vertices on the top face.
             Vector3 topLeftFront = position + new Vector3(-1.0f, 1.0f, -1.0f) * size;

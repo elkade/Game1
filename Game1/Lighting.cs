@@ -3,14 +3,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Game1
 {
-    class Lighting
+    public class Lighting
     {
         public Effect Effect;
         public Vector3 Position;
-        public Lighting(Effect effect, Vector3 position)
+        public float Angle;
+        public Lighting(Effect effect, Vector3 position, float angle)
         {
             Effect = effect;
             Position = position;
+            Angle = angle;
         }
 
         public Effect UpdateEffect(Matrix world, Camera camera)
@@ -20,6 +22,7 @@ namespace Game1
             Effect.Parameters["Projection"].SetValue(camera.ProjectionMatrix);
             Effect.Parameters["ViewVector"].SetValue(camera.Position);
             Effect.Parameters["LightPosition"].SetValue(Position);
+            Effect.Parameters["LightAngle"].SetValue(Angle);
 
             Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(world));
             Effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
