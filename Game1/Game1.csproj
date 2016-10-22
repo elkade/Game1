@@ -73,6 +73,8 @@
     </MonoGameContentReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\bench.fbx" />
+    <None Include="Content\witcher.fbx" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

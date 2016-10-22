@@ -15,12 +15,10 @@ namespace Game1
         CustomModel platform1;
         CustomModel platform2;
 
-
-        Texture2D checkerboardTexture;
-
         Vector3 cameraPosition = new Vector3(15, 10, 10);
 
         Robot robot;
+        Robot bench1;
 
         Camera camera;
 
@@ -37,41 +35,49 @@ namespace Game1
 
         protected override void Initialize()
         {
-            walls = new ConcaveCube(Vector3.Zero, 32);
+            walls = new ConcaveCube(new Vector3 (7,7,7), 32);
             platform1 = new ConvexCube(new Vector3(4, -4, -4), 16);
             platform2 = new ConvexCube(new Vector3(4, 4, -4), 16);
 
 
-            robot = new Robot();
-            robot.Initialize(Content);
+            robot = new Robot(10f, new Vector3(7,7,7));
+            robot.Initialize(Content.Load<Model>("witcher"));
+            robot.Color = Color.Green;
+
+            bench1 = new Robot(0.01f, new Vector3(10,10,10));
+            bench1.Initialize(Content.Load<Model>("bench"));
+            bench1.Color = Color.Yellow;
 
             camera = new Camera(graphics.GraphicsDevice);
 
 
             specularEffect = Content.Load<Effect>("Effects/Specular");
-            specularEffect.Parameters["AmbientColor"].SetValue(Color.White.ToVector4());
+            specularEffect.Parameters["AmbientColor"].SetValue(Color.Green.ToVector3());
             specularEffect.Parameters["AmbientIntensity"].SetValue(0.1f);
-            specularEffect.Parameters["DiffuseColor"].SetValue(Color.White.ToVector4());
-            specularEffect.Parameters["DiffuseIntensity"].SetValue(0.5f);
-            specularEffect.Parameters["Shininess"].SetValue(50.0f);
-            specularEffect.Parameters["SpecularColor"].SetValue(Color.White.ToVector4());
+
+            specularEffect.Parameters["DiffuseColor"].SetValue(Color.White.ToVector3());
+            specularEffect.Parameters["DiffuseIntensity"].SetValue(0.75f);
+
+            specularEffect.Parameters["SpecularPower"].SetValue(50.0f);
+            specularEffect.Parameters["SpecularColor"].SetValue(Color.White.ToVector3());
             specularEffect.Parameters["SpecularIntensity"].SetValue(1.0f);
 
 
 
-            lighting = new Lighting(specularEffect, new Vector3(0,5,8), MathHelper.PiOver4);
+            lighting = new Lighting(specularEffect, new Vector3(0,0,0), MathHelper.PiOver4);
 
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            checkerboardTexture = Content.Load<Texture2D>("checker");
+            //checkerboardTexture = Content.Load<Texture2D>("checker");
         }
 
         protected override void Update(GameTime gameTime)
         {
             robot.Update(gameTime);
+            bench1.Update(gameTime);
             camera.Update(gameTime);
 
             lighting.Position = camera.Position;
@@ -91,6 +97,7 @@ namespace Game1
             //platform2.Draw(effect, graphics);
 
             robot.Draw(camera, lighting);
+            bench1.Draw(camera, lighting);
 
             base.Draw(gameTime);
         }

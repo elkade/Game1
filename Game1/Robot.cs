@@ -11,13 +11,24 @@ namespace Game1
 {
     public class Robot
     {
+        public Color Color { get; set; }
+
         public Model model;
 
         float angle;
 
-        public void Initialize(ContentManager contentManager)
+        float _scale;
+
+        Vector3 Position;
+
+        public Robot(float scale, Vector3 position)
         {
-            model = contentManager.Load<Model>("witcher");
+            _scale = scale;
+            Position = position;
+        }
+        public void Initialize(Model model)
+        {
+            this.model = model;
         }
 
         public void Update(GameTime gameTime)
@@ -31,13 +42,13 @@ namespace Game1
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (ModelMeshPart part in mesh.MeshParts)
-                    part.Effect = lighting.UpdateEffect(GetWorldMatrix() * mesh.ParentBone.Transform, camera, Color.Gold);
+                    part.Effect = lighting.UpdateEffect(GetWorldMatrix(), camera, Color);
                 mesh.Draw();
             }
         }
         public Matrix GetWorldMatrix()
         {
-            return Matrix.CreateRotationX(MathHelper.PiOver4 * 2) * Matrix.CreateTranslation(0, 0, 0) * Matrix.CreateScale(0.1f);
+            return Matrix.CreateRotationX(MathHelper.PiOver4 * 2) * Matrix.CreateScale(_scale) * Matrix.CreateTranslation(Position);
 
             const float circleRadius = 0.5f;
             const float heightOffGround = 0;

@@ -20,13 +20,12 @@ namespace Game1
             Effect.Parameters["World"].SetValue(world);
             Effect.Parameters["View"].SetValue(camera.ViewMatrix);
             Effect.Parameters["Projection"].SetValue(camera.ProjectionMatrix);
-            Effect.Parameters["ViewVector"].SetValue(camera.Position);
+            Effect.Parameters["CameraPosition"].SetValue(camera.Position);
             Effect.Parameters["LightPosition"].SetValue(Position);
-            Effect.Parameters["LightAngle"].SetValue(Angle);
-            Effect.Parameters["Color"].SetValue(new Vector3(color.R/255f, color.G/255f, color.B/255f));
+            Effect.Parameters["SurfaceColor"].SetValue(color.ToVector3());
 
             Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(world));
-            Effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
+            //Effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
             return Effect;
         }
 
