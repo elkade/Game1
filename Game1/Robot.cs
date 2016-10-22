@@ -15,26 +15,33 @@ namespace Game1
 
         public Model model;
 
-        float angle;
+        public Vector3 Rotation;
 
-        float _scale;
+        public Vector3 _scale;
 
-        Vector3 Position;
+        public Vector3 Position;
 
-        public Robot(float scale, Vector3 position)
+        public Robot(Vector3 scale, Vector3 position, Vector3 rotation)
         {
             _scale = scale;
             Position = position;
+            Rotation = rotation;
+        }
+
+        public Robot(float scale, Vector3 position, Vector3 rotation)
+        {
+            _scale = new Vector3(scale,scale,scale);
+            Position = position;
+            Rotation = rotation;
         }
         public void Initialize(Model model)
         {
             this.model = model;
         }
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
             // TotalSeconds is a double so we need to cast to float
-            //angle += (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
         public void Draw(Camera camera, Lighting lighting)
@@ -48,22 +55,26 @@ namespace Game1
         }
         public Matrix GetWorldMatrix()
         {
-            return Matrix.CreateRotationX(MathHelper.PiOver4 * 2) * Matrix.CreateScale(_scale) * Matrix.CreateTranslation(Position);
+            return Matrix.CreateRotationX(Rotation.X)
+                * Matrix.CreateRotationY(Rotation.Y)
+                * Matrix.CreateRotationZ(Rotation.Z)
+                * Matrix.CreateScale(_scale)
+                * Matrix.CreateTranslation(Position);
 
-            const float circleRadius = 0.5f;
-            const float heightOffGround = 0;
+            //const float circleRadius = 0.5f;
+            //const float heightOffGround = 0;
 
-            // this matrix moves the model "out" from the origin
-            Matrix translationMatrix = Matrix.CreateRotationX(MathHelper.PiOver4 * 2) * Matrix.CreateTranslation(
-                circleRadius, 0, heightOffGround);;
+            //// this matrix moves the model "out" from the origin
+            //Matrix translationMatrix = Matrix.CreateRotationX(MathHelper.PiOver4 * 2) * Matrix.CreateTranslation(
+            //    circleRadius, 0, heightOffGround);;
 
-            // this matrix rotates everything around the origin
-            Matrix rotationMatrix = Matrix.CreateRotationZ(angle);
+            //// this matrix rotates everything around the origin
+            //Matrix rotationMatrix = Matrix.CreateRotationZ(angle);
 
-            // We combine the two to have the model move in a circle:
-            Matrix combined = translationMatrix * rotationMatrix;
+            //// We combine the two to have the model move in a circle:
+            //Matrix combined = translationMatrix * rotationMatrix;
 
-            return combined;
+            //return combined;
         }
 
     }

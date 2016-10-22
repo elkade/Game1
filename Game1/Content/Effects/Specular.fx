@@ -1,6 +1,7 @@
 ﻿float4x4 World;
 float4x4 View;
 float4x4 Projection;
+float4x4 WorldInverseTranspose;
 
 float3 AmbientColor = float3(.15, .15, .15);
 float AmbientIntensity = 0.1;
@@ -41,7 +42,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
   output.Position = mul(viewPosition, Projection);
 
   output.WorldPosition = worldPosition;
-  output.Normal = mul(input.Normal, World);
+  output.Normal = mul(input.Normal, WorldInverseTranspose);
 
   return output;
 }

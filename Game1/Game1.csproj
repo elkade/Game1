@@ -43,6 +43,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Lighting.cs" />
+    <Compile Include="Locomotive.cs" />
     <Compile Include="Models\ConcaveCube.cs" />
     <Compile Include="Models\ConvexCube.cs" />
     <Compile Include="Models\CustomModel.cs" />
@@ -74,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\bench.fbx" />
+    <None Include="Content\locomotive.fbx" />
     <None Include="Content\witcher.fbx" />
     <None Include="packages.config" />
   </ItemGroup>

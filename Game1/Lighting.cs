@@ -25,7 +25,7 @@ namespace Game1
             Effect.Parameters["SurfaceColor"].SetValue(color.ToVector3());
 
             Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(world));
-            //Effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
+            Effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
             return Effect;
         }
 

@@ -19,6 +19,8 @@ namespace Game1
 
         Robot robot;
         Robot bench1;
+        Robot bench2;
+        Robot locomotive;
 
         Camera camera;
 
@@ -35,18 +37,29 @@ namespace Game1
 
         protected override void Initialize()
         {
-            walls = new ConcaveCube(new Vector3 (7,7,7), 32);
+            walls = new ConcaveCube(new Vector3 (0,0,0), 32);
             platform1 = new ConvexCube(new Vector3(4, -4, -4), 16);
             platform2 = new ConvexCube(new Vector3(4, 4, -4), 16);
 
 
-            robot = new Robot(10f, new Vector3(7,7,7));
+            robot = new Robot(5f, new Vector3(7,7,7), Vector3.Zero);
             robot.Initialize(Content.Load<Model>("witcher"));
             robot.Color = Color.Green;
 
-            bench1 = new Robot(0.01f, new Vector3(10,10,10));
-            bench1.Initialize(Content.Load<Model>("bench"));
+            bench1 = new Robot(0.006f, new Vector3(10,10,10), Vector3.Zero);
+            bench2 = new Robot(0.006f, new Vector3(10,10,13), Vector3.Zero);
+            locomotive = new Locomotive(new Vector3(0.04f, 0.04f, 0.02f), new Vector3(-10,-11, -20), new Vector3(0,0,-MathHelper.PiOver2));
+
+            var benchContent = Content.Load<Model>("bench");
+
+            bench1.Initialize(benchContent);
             bench1.Color = Color.Yellow;
+
+            bench2.Initialize(benchContent);
+            bench2.Color = Color.Violet;
+
+            locomotive.Initialize(Content.Load<Model>("locomotive"));
+            locomotive.Color = Color.Brown;
 
             camera = new Camera(graphics.GraphicsDevice);
 
@@ -78,6 +91,8 @@ namespace Game1
         {
             robot.Update(gameTime);
             bench1.Update(gameTime);
+            bench2.Update(gameTime);
+            locomotive.Update(gameTime);
             camera.Update(gameTime);
 
             lighting.Position = camera.Position;
@@ -89,7 +104,7 @@ namespace Game1
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             Effect effect;
-            effect = lighting.UpdateEffect(walls.WorldMatrix, camera, Color.Red);
+            effect = lighting.UpdateEffect(walls.WorldMatrix, camera, Color.Gray);
             walls.Draw(effect, graphics);
             //effect = lighting.UpdateEffect(platform1.WorldMatrix, camera);
             //platform1.Draw(effect, graphics);
@@ -98,6 +113,8 @@ namespace Game1
 
             robot.Draw(camera, lighting);
             bench1.Draw(camera, lighting);
+            bench2.Draw(camera, lighting);
+            locomotive.Draw(camera, lighting);
 
             base.Draw(gameTime);
         }
