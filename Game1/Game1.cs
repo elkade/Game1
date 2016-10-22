@@ -49,12 +49,12 @@ namespace Game1
 
 
             specularEffect = Content.Load<Effect>("Effects/Specular");
-            specularEffect.Parameters["AmbientColor"].SetValue(Color.Red.ToVector4());
+            specularEffect.Parameters["AmbientColor"].SetValue(Color.White.ToVector4());
             specularEffect.Parameters["AmbientIntensity"].SetValue(0.1f);
-            specularEffect.Parameters["DiffuseColor"].SetValue(Color.Yellow.ToVector4());
+            specularEffect.Parameters["DiffuseColor"].SetValue(Color.White.ToVector4());
             specularEffect.Parameters["DiffuseIntensity"].SetValue(0.5f);
             specularEffect.Parameters["Shininess"].SetValue(50.0f);
-            specularEffect.Parameters["SpecularColor"].SetValue(Color.Green.ToVector4());
+            specularEffect.Parameters["SpecularColor"].SetValue(Color.White.ToVector4());
             specularEffect.Parameters["SpecularIntensity"].SetValue(1.0f);
 
 
@@ -74,7 +74,7 @@ namespace Game1
             robot.Update(gameTime);
             camera.Update(gameTime);
 
-            //lighting.Position = camera.Position;
+            lighting.Position = camera.Position;
 
             base.Update(gameTime);
         }
@@ -83,7 +83,7 @@ namespace Game1
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             Effect effect;
-            effect = lighting.UpdateEffect(walls.WorldMatrix, camera);
+            effect = lighting.UpdateEffect(walls.WorldMatrix, camera, Color.Red);
             walls.Draw(effect, graphics);
             //effect = lighting.UpdateEffect(platform1.WorldMatrix, camera);
             //platform1.Draw(effect, graphics);

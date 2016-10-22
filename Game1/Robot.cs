@@ -31,7 +31,7 @@ namespace Game1
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (ModelMeshPart part in mesh.MeshParts)
-                    part.Effect = lighting.UpdateEffect(GetWorldMatrix() * mesh.ParentBone.Transform, camera);
+                    part.Effect = lighting.UpdateEffect(GetWorldMatrix() * mesh.ParentBone.Transform, camera, Color.Gold);
                 mesh.Draw();
             }
         }

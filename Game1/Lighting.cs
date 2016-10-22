@@ -15,7 +15,7 @@ namespace Game1
             Angle = angle;
         }
 
-        public Effect UpdateEffect(Matrix world, Camera camera)
+        public Effect UpdateEffect(Matrix world, Camera camera, Color color)
         {
             Effect.Parameters["World"].SetValue(world);
             Effect.Parameters["View"].SetValue(camera.ViewMatrix);
@@ -23,6 +23,7 @@ namespace Game1
             Effect.Parameters["ViewVector"].SetValue(camera.Position);
             Effect.Parameters["LightPosition"].SetValue(Position);
             Effect.Parameters["LightAngle"].SetValue(Angle);
+            Effect.Parameters["Color"].SetValue(new Vector3(color.R/255f, color.G/255f, color.B/255f));
 
             Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(world));
             Effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);

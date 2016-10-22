@@ -5,6 +5,8 @@ float4x4 Projection;
 float4 AmbientColor = float4(1, 1, 1, 1);
 float AmbientIntensity = 0.1;
 
+float4 Color = float4(1, 1, 1, 1);
+
 float4x4 WorldInverseTranspose;
 
 float3 LightPosition;
@@ -83,7 +85,9 @@ float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET0
 	float dotProduct = dot(r, v);
 	float4 specular = SpecularIntensity * SpecularColor * max(pow(abs(dotProduct), Shininess), 0) * length(input.Color);
 
-	return saturate(AmbientColor * AmbientIntensity + (input.Color + specular) /** f*/ * min(1 , 1/(input.LightDistance*0.025f)));
+	float dist = min(1, 1 / (input.LightDistance*0.025f));
+
+	return saturate(Color * (AmbientColor * AmbientIntensity + input.Color * dist) + specular  * dist) /** f*/;
 }
 
 technique Specular
