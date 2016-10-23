@@ -26,12 +26,12 @@ namespace Game1.Models
             Vector3 btmRightBack = position + new Vector3(1.0f, -1.0f, 1.0f) * size;
 
             // Normal vectors for each face (needed for lighting / display)
-            Vector3 normalFront = new Vector3(0.0f, 0.0f, -1.0f);
-            Vector3 normalBack = new Vector3(0.0f, 0.0f, 1.0f);
-            Vector3 normalTop = new Vector3(0.0f, -1.0f, 0.0f);
-            Vector3 normalBottom = new Vector3(0.0f, 1.0f, 0.0f);
-            Vector3 normalLeft = new Vector3(-1.0f, 0.0f, 0.0f);
-            Vector3 normalRight = new Vector3(1.0f, 0.0f, 0.0f);
+            Vector3 normalFront = new Vector3(0.0f, 0.0f, 1.0f);
+            Vector3 normalBack = new Vector3(0.0f, 0.0f, -1.0f);
+            Vector3 normalTop = new Vector3(0.0f, 1.0f, 0.0f);
+            Vector3 normalBottom = new Vector3(0.0f, -1.0f, 0.0f);
+            Vector3 normalLeft = new Vector3(1.0f, 0.0f, 0.0f);
+            Vector3 normalRight = new Vector3(-1.0f, 0.0f, 0.0f);
 
             // UV texture coordinates
             Vector2 textureTopLeft = new Vector2(1.0f * size, 0.0f * size);

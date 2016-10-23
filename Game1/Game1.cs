@@ -12,8 +12,7 @@ namespace Game1
         GraphicsDeviceManager graphics;
 
         CustomModel walls;
-        CustomModel platform1;
-        CustomModel platform2;
+        CustomModel platform;
 
         Vector3 cameraPosition = new Vector3(15, 10, 10);
 
@@ -25,6 +24,10 @@ namespace Game1
         Camera camera;
 
         Effect specularEffect;
+
+        Light ceilingLight1;
+        Light ceilingLight2;
+        Light trainLight;
 
         Lighting lighting;
         public Game1()
@@ -38,17 +41,16 @@ namespace Game1
         protected override void Initialize()
         {
             walls = new ConcaveCube(new Vector3 (0,0,0), 32);
-            platform1 = new ConvexCube(new Vector3(4, -4, -4), 16);
-            platform2 = new ConvexCube(new Vector3(4, 4, -4), 16);
+            platform = new ConvexCube(new Vector3(5, -15, 0), 32);
 
 
-            robot = new Robot(5f, new Vector3(7,7,7), Vector3.Zero);
+            robot = new Robot(4f, new Vector3(7,-10,7), Vector3.Zero);
             robot.Initialize(Content.Load<Model>("witcher"));
             robot.Color = Color.Green;
 
-            bench1 = new Robot(0.006f, new Vector3(10,10,10), Vector3.Zero);
-            bench2 = new Robot(0.006f, new Vector3(10,10,13), Vector3.Zero);
-            locomotive = new Locomotive(new Vector3(0.04f, 0.04f, 0.02f), new Vector3(-10,-11, -20), new Vector3(0,0,-MathHelper.PiOver2));
+            bench1 = new Robot(0.006f, new Vector3(10,-12.5f,0), new Vector3(0, -MathHelper.PiOver2, 0));
+            bench2 = new Robot(0.006f, new Vector3(10,-12.5f, 13), new Vector3(0, -MathHelper.PiOver2, 0));
+            locomotive = new Locomotive(new Vector3(0.04f, 0.04f, 0.02f), new Vector3(-10, -11, -20), new Vector3(0,0,-MathHelper.PiOver2));
 
             var benchContent = Content.Load<Model>("bench");
 
@@ -59,32 +61,31 @@ namespace Game1
             bench2.Color = Color.Violet;
 
             locomotive.Initialize(Content.Load<Model>("locomotive"));
-            locomotive.Color = Color.Brown;
+            locomotive.Color = Color.SaddleBrown;
 
             camera = new Camera(graphics.GraphicsDevice);
 
 
             specularEffect = Content.Load<Effect>("Effects/Specular");
-            specularEffect.Parameters["AmbientColor"].SetValue(Color.Green.ToVector3());
+            specularEffect.Parameters["AmbientColor"].SetValue(Color.White.ToVector3());
             specularEffect.Parameters["AmbientIntensity"].SetValue(0.1f);
 
-            specularEffect.Parameters["DiffuseColor"].SetValue(Color.White.ToVector3());
             specularEffect.Parameters["DiffuseIntensity"].SetValue(0.75f);
 
-            specularEffect.Parameters["SpecularPower"].SetValue(50.0f);
-            specularEffect.Parameters["SpecularColor"].SetValue(Color.White.ToVector3());
+            specularEffect.Parameters["SpecularPower"].SetValue(100f);
             specularEffect.Parameters["SpecularIntensity"].SetValue(1.0f);
 
+            ceilingLight1 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Green, Position = new Vector3(0, 15, 8) };
+            ceilingLight2 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Blue, Position = new Vector3(0, 15, -8) };
+            trainLight = new Light { DiffuseColor = Color.Red, SpecularColor = Color.Red, Position = Vector3.Zero };
 
-
-            lighting = new Lighting(specularEffect, new Vector3(0,0,0), MathHelper.PiOver4);
+            lighting = new Lighting(specularEffect, ceilingLight1, ceilingLight2/*, trainLight*/);
 
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            //checkerboardTexture = Content.Load<Texture2D>("checker");
         }
 
         protected override void Update(GameTime gameTime)
@@ -95,7 +96,8 @@ namespace Game1
             locomotive.Update(gameTime);
             camera.Update(gameTime);
 
-            lighting.Position = camera.Position;
+            //cameraLight.Position = camera.Position;
+            trainLight.Position = locomotive.Position + new Vector3(0,0, 10);
 
             base.Update(gameTime);
         }
@@ -106,10 +108,9 @@ namespace Game1
             Effect effect;
             effect = lighting.UpdateEffect(walls.WorldMatrix, camera, Color.Gray);
             walls.Draw(effect, graphics);
-            //effect = lighting.UpdateEffect(platform1.WorldMatrix, camera);
-            //platform1.Draw(effect, graphics);
-            //effect = lighting.UpdateEffect(platform2.WorldMatrix, camera);
-            //platform2.Draw(effect, graphics);
+            effect = lighting.UpdateEffect(platform.WorldMatrix, camera, new Color(15,10,10));
+            platform.Draw(effect, graphics);
+
 
             robot.Draw(camera, lighting);
             bench1.Draw(camera, lighting);

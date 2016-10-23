@@ -1,4 +1,6 @@
-﻿float4x4 World;
+﻿#define POINT_LIGHTS_NUM 2
+
+float4x4 World;
 float4x4 View;
 float4x4 Projection;
 float4x4 WorldInverseTranspose;
@@ -6,18 +8,18 @@ float4x4 WorldInverseTranspose;
 float3 AmbientColor = float3(.15, .15, .15);
 float AmbientIntensity = 0.1;
 
-float3 DiffuseColor = float3(.85, .85, .85);
+float3 DiffuseColor[POINT_LIGHTS_NUM];
 float DiffuseIntensity = 1.0;
 
 float SpecularPower = 32;
-float3 SpecularColor = float3(1, 1, 1);
+float3 SpecularColor[POINT_LIGHTS_NUM];
 float SpecularIntensity = 1.0;
 
 float3 SurfaceColor = float3(1, 1, 1);
 
 float3 CameraPosition = float3(0, 0, 0);
 
-float3 LightPosition = float3(0, 0, 0);
+float3 LightPosition[POINT_LIGHTS_NUM];
 float LightAttenuation = 100;
 float LightFalloff = 2;
 
@@ -42,32 +44,31 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
   output.Position = mul(viewPosition, Projection);
 
   output.WorldPosition = worldPosition;
-  output.Normal = mul(input.Normal, WorldInverseTranspose);
+  output.Normal = mul(input.Normal, World);
 
   return output;
 }
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-  float3 totalLight = float3(0, 0, 0);
-  
-  float d = distance(LightPosition, input.WorldPosition);
-  float att = 1 - pow(clamp(d / LightAttenuation, 0, 1), LightFalloff);
+  float3 totalLight = AmbientColor * AmbientIntensity;
+  for (int i = 0; i < POINT_LIGHTS_NUM; i++)
+  {
+	  float d = distance(LightPosition[i], input.WorldPosition);
+	  float att = 1 - pow(clamp(d / LightAttenuation, 0, 1), LightFalloff);
 
-  totalLight += AmbientColor * AmbientIntensity;
- 
-  float3 lightDir = normalize(LightPosition - input.WorldPosition);
-  float diffuse = saturate(dot(normalize(input.Normal), lightDir)) * DiffuseIntensity * DiffuseColor;
+	  float3 lightDir = normalize(LightPosition[i] - input.WorldPosition);
+	  float diffuse = saturate(dot(normalize(input.Normal), lightDir));
 
-  totalLight += diffuse * att * SurfaceColor;
+	  totalLight += diffuse * att * SurfaceColor * DiffuseColor[i];
 
-  float3 normal = normalize(input.Normal);
-  float3 viewDir = normalize(CameraPosition - input.WorldPosition);
-  float3 refl = -reflect(lightDir, normal);
-  float specular = pow(saturate(dot(refl, viewDir)), SpecularPower) * SpecularColor * SpecularIntensity;
+	  float3 normal = normalize(input.Normal);
+	  float3 viewDir = normalize(CameraPosition - input.WorldPosition);
+	  float3 refl = -reflect(lightDir, normal);
+	  float specular = pow(saturate(dot(refl, viewDir)), SpecularPower);
 
-  totalLight += specular * att;
-
+	  totalLight += specular * att * SpecularColor[i];
+  }
   return float4( saturate(totalLight), 1);
 }
 
