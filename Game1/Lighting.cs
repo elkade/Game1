@@ -22,7 +22,10 @@ namespace Game1
             Effect.Parameters["View"].SetValue(camera.ViewMatrix);
             Effect.Parameters["Projection"].SetValue(camera.ProjectionMatrix);
             Effect.Parameters["CameraPosition"].SetValue(camera.Position);
-            Effect.Parameters["LightPosition"].SetValue(_lights.Select(l=>l.Position).ToArray());
+            Effect.Parameters["LightPosition"].SetValue(_lights.Select(l => l.Position).ToArray());
+            Effect.Parameters["LightDirection"].SetValue(_lights.Select(l=>l.Direction).ToArray());
+            Effect.Parameters["LightPhi"].SetValue(_lights.Select(l=>l.Phi).ToArray());
+            Effect.Parameters["LightTheta"].SetValue(_lights.Select(l=>l.Theta).ToArray());
             Effect.Parameters["SurfaceColor"].SetValue(color.ToVector3());
             Effect.Parameters["DiffuseColor"].SetValue(_lights.Select(l => l.DiffuseColor.ToVector3()).ToArray());
             Effect.Parameters["SpecularColor"].SetValue(_lights.Select(l => l.SpecularColor.ToVector3()).ToArray());
@@ -36,8 +39,17 @@ namespace Game1
 
     public class Light
     {
+        public Light()
+        {
+            Phi = MathHelper.TwoPi;
+            Theta = MathHelper.TwoPi;
+            Direction = new Vector3(0, 1, 0);
+        }
         public Vector3 Position { get; set; }
+        public Vector3 Direction { get; set; }
         public Color DiffuseColor { get; set; }
         public Color SpecularColor { get; set; }
+        public float Phi { get; set; }
+        public float Theta { get; set; }
     }
 }

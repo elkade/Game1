@@ -70,16 +70,16 @@ namespace Game1
             specularEffect.Parameters["AmbientColor"].SetValue(Color.White.ToVector3());
             specularEffect.Parameters["AmbientIntensity"].SetValue(0.1f);
 
-            specularEffect.Parameters["DiffuseIntensity"].SetValue(0.75f);
+            specularEffect.Parameters["DiffuseIntensity"].SetValue(1f);
 
             specularEffect.Parameters["SpecularPower"].SetValue(100f);
             specularEffect.Parameters["SpecularIntensity"].SetValue(1.0f);
 
             ceilingLight1 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Green, Position = new Vector3(0, 15, 8) };
             ceilingLight2 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Blue, Position = new Vector3(0, 15, -8) };
-            trainLight = new Light { DiffuseColor = Color.Red, SpecularColor = Color.Red, Position = Vector3.Zero };
+            trainLight = new Light { DiffuseColor = Color.Yellow, SpecularColor = Color.Yellow, Position = Vector3.Zero, Direction = new Vector3(0, 0, -1), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4/2 };
 
-            lighting = new Lighting(specularEffect, ceilingLight1, ceilingLight2/*, trainLight*/);
+            lighting = new Lighting(specularEffect, ceilingLight1, ceilingLight2, trainLight);
 
             base.Initialize();
         }
@@ -108,7 +108,7 @@ namespace Game1
             Effect effect;
             effect = lighting.UpdateEffect(walls.WorldMatrix, camera, Color.Gray);
             walls.Draw(effect, graphics);
-            effect = lighting.UpdateEffect(platform.WorldMatrix, camera, new Color(15,10,10));
+            effect = lighting.UpdateEffect(platform.WorldMatrix, camera, Color.DarkGray); //new Color(15,10,10));
             platform.Draw(effect, graphics);
 
 
