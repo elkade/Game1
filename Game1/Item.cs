@@ -35,7 +35,6 @@ namespace Game1
 
         public virtual void Update(GameTime gameTime)
         {
-            // TotalSeconds is a double so we need to cast to float
         }
 
         public void Draw(Camera camera, Lighting lighting)
@@ -54,21 +53,6 @@ namespace Game1
                 * Matrix.CreateRotationZ(Rotation.Z)
                 * Matrix.CreateScale(_scale)
                 * Matrix.CreateTranslation(Position);
-
-            //const float circleRadius = 0.5f;
-            //const float heightOffGround = 0;
-
-            //// this matrix moves the model "out" from the origin
-            //Matrix translationMatrix = Matrix.CreateRotationX(MathHelper.PiOver4 * 2) * Matrix.CreateTranslation(
-            //    circleRadius, 0, heightOffGround);;
-
-            //// this matrix rotates everything around the origin
-            //Matrix rotationMatrix = Matrix.CreateRotationZ(angle);
-
-            //// We combine the two to have the model move in a circle:
-            //Matrix combined = translationMatrix * rotationMatrix;
-
-            //return combined;
         }
 
     }

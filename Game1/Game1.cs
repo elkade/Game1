@@ -5,9 +5,6 @@ using System;
 
 namespace Game1
 {
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
@@ -38,6 +35,8 @@ namespace Game1
             // graphics.IsFullScreen = true;
             IsMouseVisible = true;
             Content.RootDirectory = "Content";
+            graphics.PreferredBackBufferHeight = 800;
+            graphics.PreferredBackBufferWidth = 1200;
         }
 
         protected override void Initialize()
@@ -144,26 +143,3 @@ namespace Game1
 
     }
 }
-
-/*
-
-            int r = (int)((col.R + colVec.X * gameTime.ElapsedGameTime.TotalSeconds * 100));
-            int g = (int)((col.G + colVec.Y * gameTime.ElapsedGameTime.TotalSeconds * 100));
-            int b = (int)((col.B + colVec.Z * gameTime.ElapsedGameTime.TotalSeconds * 100));
-            if (r >= 255)
-                colVec.X = -1;
-            else if (r <= 0)
-                colVec.X = 1;
-            if (g >= 255)
-                colVec.Y = -1;
-            else if (g <= 0)
-                colVec.Y = 1;
-            if (b >= 255)
-                colVec.Z = -1;
-            else if (b <= 0)
-                colVec.Z = 1;
-            col.R = (byte)r;
-            col.G = (byte)g;
-            col.B = (byte)b;
-
-*/

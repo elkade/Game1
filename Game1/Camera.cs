@@ -6,15 +6,21 @@ namespace Game1
 {
     public class Camera
     {
-        // We need this to calculate the aspectRatio
-        // in the ProjectionMatrix property.
         GraphicsDevice graphicsDevice;
 
-        public Vector3 Position = new Vector3(0,0,-20);
+        public Vector3 Position = new Vector3(0, 0, -20);
 
         public Matrix RotationMatrix;
 
-        Vector3 lookAtVector { get { var lookat = Vector3.Transform( new Vector3(0, 0, 1), RotationMatrix); lookat.Normalize(); return lookat; } }
+        Vector3 lookAtVector
+        {
+            get
+            {
+                var lookat = Vector3.Transform(new Vector3(0, 0, 1), RotationMatrix);
+                lookat.Normalize();
+                return lookat;
+            }
+        }
 
         Vector3 rotation = new Vector3(0, 0, 0);
 
@@ -79,10 +85,6 @@ namespace Game1
             var forwardVector = new Vector3(positionX, positionY, positionZ);
 
 
-
-            const float unitsPerSecond = 10;
-
-
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
 
@@ -121,7 +123,7 @@ namespace Game1
 
             forwardVector = Vector3.Transform(forwardVector, RotationMatrix);
 
-            Position += forwardVector * unitsPerSecond * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Position += forwardVector * 10 * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         }
         private int previousScrollValue;

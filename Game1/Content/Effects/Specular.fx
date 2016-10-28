@@ -47,7 +47,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
   output.Position = mul(viewPosition, Projection);
 
   output.WorldPosition = worldPosition;
-  output.Normal = mul(input.Normal, WorldInverseTranspose);
+  output.Normal = mul(input.Normal, World);
 
   return output;
 }
@@ -66,20 +66,20 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 	  float3 refl = -reflect(lightDir, normal);
 
 
-	  float f = dot(normal, refl);
+	  float spot = dot(normal, refl);
 	  float angle = acos(dot(lightDir, normalize(LightDirection[i])));
-	  if (angle > LightPhi[i]) f = 0.0f;
-	  else if (angle < LightTheta[i]) f = 1.0f;
-	  else f = smoothstep(LightPhi[i], LightTheta[i], angle);
+	  if (angle > LightPhi[i]) spot = 0.0f;
+	  else if (angle < LightTheta[i]) spot = 1.0f;
+	  else spot = smoothstep(LightPhi[i], LightTheta[i], angle);
 
 
 	  float diffuse = saturate(dot(normalize(input.Normal), lightDir));
 
-	  totalLight += diffuse * att * SurfaceColor * DiffuseColor[i] * f * DiffuseIntensity;
+	  totalLight += diffuse * att * SurfaceColor * DiffuseColor[i] * spot * DiffuseIntensity;
 
 	  float specular = pow(saturate(dot(refl, viewDir)), SpecularPower);
 
-	  totalLight += specular * att * SpecularColor[i] * f * SpecularIntensity;
+	  totalLight += specular * att * SpecularColor[i] * spot * SpecularIntensity;
   }
   return float4( saturate(totalLight), 1);
 }

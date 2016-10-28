@@ -18,13 +18,11 @@ namespace Game1.Models
 
             int n = 64;
 
-            // Calculate the position of the vertices on the top face.
             Vector3 topLeftFront = position + new Vector3(-1.0f, 1.0f, -1.0f) * size;
             Vector3 topLeftBack = position + new Vector3(-1.0f, 1.0f, 1.0f) * size;
             Vector3 topRightFront = position + new Vector3(1.0f, 1.0f, -1.0f) * size;
             Vector3 topRightBack = position + new Vector3(1.0f, 1.0f, 1.0f) * size;
 
-            // Calculate the position of the vertices on the bottom face.
             Vector3 btmLeftFront = position + new Vector3(-1.0f, -1.0f, -1.0f) * size;
             Vector3 btmLeftBack = position + new Vector3(-1.0f, -1.0f, 1.0f) * size;
             Vector3 btmRightFront = position + new Vector3(1.0f, -1.0f, -1.0f) * size;
