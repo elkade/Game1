@@ -1,15 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game1
 {
-    public class Robot
+    public class Item
     {
         public Color Color { get; set; }
 
@@ -21,14 +15,14 @@ namespace Game1
 
         public Vector3 Position;
 
-        public Robot(Vector3 scale, Vector3 position, Vector3 rotation)
+        public Item(Vector3 scale, Vector3 position, Vector3 rotation)
         {
             _scale = scale;
             Position = position;
             Rotation = rotation;
         }
 
-        public Robot(float scale, Vector3 position, Vector3 rotation)
+        public Item(float scale, Vector3 position, Vector3 rotation)
         {
             _scale = new Vector3(scale,scale,scale);
             Position = position;

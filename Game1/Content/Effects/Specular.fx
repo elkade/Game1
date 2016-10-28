@@ -75,11 +75,11 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
 	  float diffuse = saturate(dot(normalize(input.Normal), lightDir));
 
-	  totalLight += diffuse * att * SurfaceColor * DiffuseColor[i] * f;
+	  totalLight += diffuse * att * SurfaceColor * DiffuseColor[i] * f * DiffuseIntensity;
 
 	  float specular = pow(saturate(dot(refl, viewDir)), SpecularPower);
 
-	  totalLight += specular * att * SpecularColor[i] * f;
+	  totalLight += specular * att * SpecularColor[i] * f * SpecularIntensity;
   }
   return float4( saturate(totalLight), 1);
 }

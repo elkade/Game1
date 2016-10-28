@@ -10,11 +10,11 @@ namespace Game1
         // in the ProjectionMatrix property.
         GraphicsDevice graphicsDevice;
 
-        public Vector3 Position = new Vector3(0,0,24);
+        public Vector3 Position = new Vector3(0,0,-20);
 
         public Matrix RotationMatrix;
 
-        Vector3 lookAtVector { get { var lookat = Vector3.Transform( new Vector3(0, 0, -1), RotationMatrix); lookat.Normalize(); return lookat; } }
+        Vector3 lookAtVector { get { var lookat = Vector3.Transform( new Vector3(0, 0, 1), RotationMatrix); lookat.Normalize(); return lookat; } }
 
         Vector3 rotation = new Vector3(0, 0, 0);
 
@@ -57,20 +57,20 @@ namespace Game1
 
             if (mouseState.ScrollWheelValue < previousScrollValue)
             {
-                positionZ += 3;
+                positionZ -= 3;
             }
             else if (mouseState.ScrollWheelValue > previousScrollValue)
             {
-                positionZ -= 3;
+                positionZ += 3;
             }
             previousScrollValue = mouseState.ScrollWheelValue;
 
 
 
             if (keyboardState.IsKeyDown(Keys.Right))
-                positionX += 1;
-            if (keyboardState.IsKeyDown(Keys.Left))
                 positionX -= 1;
+            if (keyboardState.IsKeyDown(Keys.Left))
+                positionX += 1;
             if (keyboardState.IsKeyDown(Keys.Up))
                 positionY += 1;
             if (keyboardState.IsKeyDown(Keys.Down))
@@ -106,14 +106,14 @@ namespace Game1
 
                 if (yRatio < 1 / 3.0f)
                 {
-                    rotation.X += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    rotation.X += -(float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
                 else if (yRatio < 2 / 3.0f)
                 {
                 }
                 else
                 {
-                    rotation.X += -(float)gameTime.ElapsedGameTime.TotalSeconds;
+                    rotation.X += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
             }
 
