@@ -31,27 +31,19 @@ float FogStart = 0;
 float FogEnd = 100;
 float3 FogColor = float3(1, 1, 1);
 
-
-texture BasicTexture;
-
-sampler BasicTextureSampler = sampler_state {
-	texture = <BasicTexture>;
-};
-
 bool TextureEnabled = false;
 
 struct VertexShaderInput
 {
   float4 Position : POSITION0;
   float3 Normal : NORMAL0;
-  float2 UV : TEXCOORD;
+
 };
 struct VertexShaderOutput
 {
   float4 Position : POSITION0;
   float3 Normal : TEXCOORD1;
   float4 WorldPosition : TEXCOORD2;
-  float2 UV : TEXCOORD0;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
@@ -62,8 +54,6 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
   float4 viewPosition = mul(worldPosition, View);
   output.Position = mul(viewPosition, Projection);
 
-  output.UV = input.UV;
-
   output.WorldPosition = worldPosition;
   output.Normal = mul(input.Normal, World);
 
@@ -72,9 +62,6 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-	if (TextureEnabled) {
-		SurfaceColor = tex2D(BasicTextureSampler, input.UV).rgb;
-	}
   float3 totalLight = AmbientColor * AmbientIntensity;
   for (int i = 0; i < POINT_LIGHTS_NUM; i++)
   {

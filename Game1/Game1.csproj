@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Effects\Specular2.fx" />
     <Content Include="Content\Effects\Specular.fx" />
     <Content Include="Content\Effects\Ambient.fx" />
     <Content Include="Content\Effects\Diffuse.fx" />

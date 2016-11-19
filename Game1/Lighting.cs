@@ -16,7 +16,7 @@ namespace Game1
             _lights = lights;
         }
 
-        public Effect UpdateEffect(Matrix world, Camera camera, Color color)
+        public Effect UpdateEffect(Matrix world, Camera camera, Color color, Texture texture = null)
         {
             Effect.Parameters["World"].SetValue(world);
             Effect.Parameters["View"].SetValue(camera.ViewMatrix);
@@ -29,6 +29,13 @@ namespace Game1
             Effect.Parameters["SurfaceColor"].SetValue(color.ToVector3());
             Effect.Parameters["DiffuseColor"].SetValue(_lights.Select(l => l.DiffuseColor.ToVector3()).ToArray());
             Effect.Parameters["SpecularColor"].SetValue(_lights.Select(l => l.SpecularColor.ToVector3()).ToArray());
+            if (texture != null)
+            {
+                Effect.Parameters["TextureEnabled"].SetValue(true);
+                Effect.Parameters["BasicTexture"].SetValue(texture);
+            }
+            else
+                Effect.Parameters["TextureEnabled"].SetValue(false);
 
             Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(world));
             Effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);

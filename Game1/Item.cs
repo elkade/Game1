@@ -42,7 +42,9 @@ namespace Game1
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (ModelMeshPart part in mesh.MeshParts)
+                {
                     part.Effect = lighting.UpdateEffect(GetWorldMatrix(), camera, Color);
+                }
                 mesh.Draw();
             }
         }

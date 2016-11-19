@@ -21,7 +21,8 @@ namespace Game1
 
         Camera camera;
 
-        Effect specularEffect;
+        Effect effect;
+        Effect effectLoco;
 
         Light ceilingLight1;
         Light ceilingLight2;
@@ -29,6 +30,9 @@ namespace Game1
         Light witcherLight;
 
         Lighting lighting;
+        Lighting lightingLoco;
+
+        Texture2D texture;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -41,17 +45,17 @@ namespace Game1
 
         protected override void Initialize()
         {
-            walls = new ConcaveCube(new Vector3 (0,0,0), 32);
+            walls = new ConcaveCube(new Vector3(0, 0, 0), 32);
             platform = new ConvexCube(new Vector3(5, -15, 0), 32);
 
 
-            robot = new Item(4f, new Vector3(7,-10,7), Vector3.Zero);
+            robot = new Item(4f, new Vector3(7, -10, 7), Vector3.Zero);
             robot.Initialize(Content.Load<Model>("witcher"));
             robot.Color = Color.Green;
 
-            bench1 = new Item(0.006f, new Vector3(10,-12.5f,0), new Vector3(0, -MathHelper.PiOver2, 0));
-            bench2 = new Item(0.006f, new Vector3(10,-12.5f, 13), new Vector3(0, -MathHelper.PiOver2, 0));
-            locomotive = new Locomotive(new Vector3(0.04f, 0.04f, 0.02f), new Vector3(-10, -11, -20), new Vector3(0,0,-MathHelper.PiOver2));
+            bench1 = new Item(0.006f, new Vector3(10, -12.5f, 0), new Vector3(0, -MathHelper.PiOver2, 0));
+            bench2 = new Item(0.006f, new Vector3(10, -12.5f, 13), new Vector3(0, -MathHelper.PiOver2, 0));
+            locomotive = new Locomotive(new Vector3(0.04f, 0.04f, 0.02f), new Vector3(-10, -11, -20), new Vector3(0, 0, -MathHelper.PiOver2));
 
             var benchContent = Content.Load<Model>("bench");
 
@@ -66,23 +70,34 @@ namespace Game1
 
             camera = new Camera(graphics.GraphicsDevice);
 
+            texture = Content.Load<Texture2D>("Textures/tex1");
 
-            specularEffect = Content.Load<Effect>("Effects/Specular");
-            specularEffect.Parameters["AmbientColor"].SetValue(Color.White.ToVector3());
-            specularEffect.Parameters["AmbientIntensity"].SetValue(0.1f);
-
-            specularEffect.Parameters["DiffuseIntensity"].SetValue(1.0f);
-
-            specularEffect.Parameters["SpecularPower"].SetValue(100f);
-            specularEffect.Parameters["SpecularIntensity"].SetValue(1.0f);
+            effect = Content.Load<Effect>("Effects/Specular");
+            effectLoco = Content.Load<Effect>("Effects/Specular2");
+            SetParams(effect);
+            SetParams(effectLoco);
 
             ceilingLight1 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Green, Position = new Vector3(0, 15, 8), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4 / 2 };
             ceilingLight2 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Blue, Position = new Vector3(0, 15, -8), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4 / 2 };
-            trainLight = new Light { DiffuseColor = Color.Yellow, SpecularColor = Color.Yellow, Position = Vector3.Zero, Direction = new Vector3(0, 0, -1), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4/2 };
-            witcherLight = new Light { DiffuseColor = Color.Red, SpecularColor = Color.Red, Position = new Vector3(7,-5,7), Direction=new Vector3(0,0,-1), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4/2 };
-            lighting = new Lighting(specularEffect, ceilingLight1, ceilingLight2, trainLight, witcherLight);
+            trainLight = new Light { DiffuseColor = Color.Yellow, SpecularColor = Color.Yellow, Position = Vector3.Zero, Direction = new Vector3(0, 0, -1), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4 / 2 };
+            witcherLight = new Light { DiffuseColor = Color.Red, SpecularColor = Color.Red, Position = new Vector3(7, -5, 7), Direction = new Vector3(0, 0, -1), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4 / 2 };
+            lighting = new Lighting(effect, ceilingLight1, ceilingLight2, trainLight, witcherLight);
+            lightingLoco = new Lighting(effectLoco, ceilingLight1, ceilingLight2, trainLight, witcherLight);
 
             base.Initialize();
+        }
+
+        private void SetParams(Effect effect)
+        {
+            effect.Parameters["AmbientColor"].SetValue(Color.White.ToVector3());
+            effect.Parameters["AmbientIntensity"].SetValue(0.1f);
+
+            effect.Parameters["DiffuseIntensity"].SetValue(1.0f);
+
+            effect.Parameters["SpecularPower"].SetValue(100f);
+            effect.Parameters["SpecularIntensity"].SetValue(1.0f);
+
+            effect.Parameters["FogEnabled"].SetValue(false);
         }
 
         protected override void LoadContent()
@@ -128,15 +143,16 @@ namespace Game1
             GraphicsDevice.Clear(Color.CornflowerBlue);
             Effect effect;
             effect = lighting.UpdateEffect(walls.WorldMatrix, camera, Color.Gray);
+            locomotive.Draw(camera, lightingLoco);
+
             walls.Draw(effect, graphics);
             effect = lighting.UpdateEffect(platform.WorldMatrix, camera, Color.DarkGray); //new Color(15,10,10));
-            platform.Draw(effect, graphics);
+            platform.Draw(effect, graphics, texture);
 
 
             robot.Draw(camera, lighting);
             bench1.Draw(camera, lighting);
             bench2.Draw(camera, lighting);
-            locomotive.Draw(camera, lighting);
 
             base.Draw(gameTime);
         }
