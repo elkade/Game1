@@ -45,7 +45,7 @@ namespace Game1
             {
                 foreach (ModelMeshPart part in mesh.MeshParts)
                 {
-                    part.Effect = lighting.UpdateEffect(GetWorldMatrix(), camera, Color, null);
+                    part.Effect = lighting.UpdateEffect(GetWorldMatrix(), camera, Color, Texture);
                 }
                 mesh.Draw();
             }

@@ -57,18 +57,18 @@ struct VertexShaderInput
 {
   float4 Position : POSITION0;
   float3 Normal : NORMAL0;
-  float2 UV : TEXCOORD;
+  float3 UV : TEXCOORD;
 };
 struct VertexShaderOutput
 {
   float4 Position : POSITION0;
   float3 Normal : TEXCOORD1;
   float4 WorldPosition : TEXCOORD2;
-  float2 UV : TEXCOORD0;
+  float3 UV : TEXCOORD0;
   float2 UVProj : TEXCOORD3;
 };
 
-bool SkyBoxEnabled = true;
+bool SkyBoxEnabled = false;
 Texture SkyBoxTexture;
 samplerCUBE SkyBoxSampler = sampler_state
 {
@@ -94,7 +94,9 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	float4 pUV = mul(pViewPosition, pProjection);
 	output.UVProj = mul(pUV, TextureTransform);
 	output.UV = input.UV;
-
+if (SkyBoxEnabled) {
+	output.UV = worldPosition - CameraPosition;
+}
 	//output.TextureCoordinate = input.TextureCoordinate;
 
   output.WorldPosition = worldPosition;
@@ -111,11 +113,9 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 		SurfaceColor = texA *(1- texB[3]) + texB * texB[3];
 	}
 	 
-//if (SkyBoxEnabled) {
-//
-//	SurfaceColor = texCUBE(SkyBoxSampler, input.TextureCoordinate);
-//
-//}
+if (SkyBoxEnabled) {
+	return texCUBE(SkyBoxSampler, normalize(input.UV));
+}
   float3 totalLight = AmbientColor * AmbientIntensity;
   for (int i = 0; i < POINT_LIGHTS_NUM; i++)
   {

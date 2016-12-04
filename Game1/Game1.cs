@@ -66,7 +66,7 @@ namespace Game1
 
         protected override void Initialize()
         {
-            walls = new ConcaveCube(new Vector3(0, 0, 0), 32);
+            walls = new ConcaveCube(new Vector3(0, 16, 0), 32);
             platform = new ConvexCube(new Vector3(5, -15, 0), 32);
             screen = new Screen(new Vector3(0, 7, 15.5f), 12, 8);
 
@@ -77,7 +77,7 @@ namespace Game1
 
             bench1 = new Robot(0.006f, new Vector3(10, -12.5f, 0), new Vector3(0, -MathHelper.PiOver2, 0));
             bench2 = new Robot(0.006f, new Vector3(10, -12.5f, 13), new Vector3(0, -MathHelper.PiOver2, 0));
-            locomotive = new Locomotive(new Vector3(0.04f, 0.04f, 0.02f), new Vector3(-10, -11, -20), new Vector3(0, 0, -MathHelper.PiOver2));
+            locomotive = new Locomotive(new Vector3(0.04f, 0.04f, 0.02f), new Vector3(-8.5f, -11, -20), new Vector3(0, 0, -MathHelper.PiOver2));
 
             var benchContent = Content.Load<Model>("bench");
 
@@ -135,7 +135,8 @@ namespace Game1
             basicEffect.FogStart = 0;
             basicEffect.FogEnd = 30;
 
-            robot.Texture = texture;
+            bench1.Texture = texture;
+            robot.Texture = texture2;
 
             skyBox = Content.Load<TextureCube>("Textures/OutputCube");
             //effect.Parameters["SkyBoxTexture"].SetValue(skyBox);
@@ -159,10 +160,6 @@ namespace Game1
             base.Initialize();
         }
 
-        /// <summary>
-        /// Draws the entire scene in the given render target.
-        /// </summary>
-        /// <returns>A texture2D with the scene drawn in it.</returns>
         protected void DrawSceneToTexture(RenderTarget2D renderTarget, Camera camera)
         {
             // Set the render target
@@ -194,7 +191,6 @@ namespace Game1
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            graphics.GraphicsDevice.PresentationParameters.MultiSampleCount = 16;
         }
 
         Matrix scale = Matrix.CreateScale(1);
@@ -353,7 +349,9 @@ namespace Game1
 
             locomotive.Draw(camera, lightingLoco);
 
+            effect.Parameters["SkyBoxEnabled"].SetValue(true);
             robot.Draw(camera, lighting);
+            effect.Parameters["SkyBoxEnabled"].SetValue(false);
 
             bench2.Draw(camera, lighting);
 

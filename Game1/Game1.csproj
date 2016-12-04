@@ -74,8 +74,6 @@
   <ItemGroup>
     <Content Include="Content\Effects\Specular2.fx" />
     <Content Include="Content\Effects\Specular.fx" />
-    <Content Include="Content\Effects\Ambient.fx" />
-    <Content Include="Content\Effects\Diffuse.fx" />
     <Content Include="Content\Sunset.dds" />
     <Content Include="Content\tex1.png" />
     <Content Include="Content\tex2.png" />

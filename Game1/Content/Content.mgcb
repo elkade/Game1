@@ -32,18 +32,6 @@
 /processorParam:TextureFormat=DxtCompressed
 /build:witcher.fbx
 
-#begin Effects/Ambient.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Effects/Ambient.fx
-
-#begin Effects/Diffuse.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Effects/Diffuse.fx
-
 #begin Effects/Specular.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -106,27 +94,15 @@
 /processorParam:DebugMode=Auto
 /build:Effects/Specular2.fx
 
-#begin Textures/Sunset.dds
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Sunset.dds
-
 #begin Textures/OutputCube.dds
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
+/processorParam:GenerateMipmaps=True
 /processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
+/processorParam:ResizeToPowerOfTwo=True
+/processorParam:MakeSquare=True
 /processorParam:TextureFormat=Color
 /build:Textures/OutputCube.dds
 
