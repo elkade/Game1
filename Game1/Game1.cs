@@ -61,8 +61,6 @@ namespace Game1
             graphics.PreferredBackBufferHeight = 800;
             graphics.PreferredBackBufferWidth = 1200;
             graphics.PreferMultiSampling = true;
-
-
             graphics.ApplyChanges();
         }
 
@@ -95,7 +93,7 @@ namespace Game1
             camera = new Camera(graphics.GraphicsDevice);
             camera2 = new Camera(graphics.GraphicsDevice)
             {
-                Position = new Vector3(20, -5.600631f, -18.18444f),
+                Position = new Vector3(20, -8.600631f, -22),
                 RotationMatrix = new Matrix(
                     new Vector4(0.8854502f, 0, 0.4647342f, 0),
                     new Vector4(0.07709774f, 0.9861432f, -0.146893f, 0),
@@ -217,14 +215,11 @@ namespace Game1
 
             UpdateParameters();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.D1))
-                scale = Matrix.CreateScale(1.1f);
-            else if (Keyboard.GetState().IsKeyDown(Keys.D2))
-                scale = Matrix.CreateScale(0.9f);
-            if (Keyboard.GetState().IsKeyDown(Keys.Q))
-                platformTex = false;
-            else if (Keyboard.GetState().IsKeyDown(Keys.W))
-                platformTex = true;
+            SwitchProjectionSize();
+            SwitchPlatformTexture();
+            SwitchFog();
+            SwitchTextureFilter();
+            SwitchAntiAliasing();
 
             textureMatrix = textureMatrix * scale * Matrix.CreateRotationZ((float)gameTime.ElapsedGameTime.TotalSeconds * MathHelper.PiOver4 / 4);
 
@@ -233,6 +228,77 @@ namespace Game1
 
             base.Update(gameTime);
         }
+
+        private void SwitchProjectionSize()
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.D1))
+                scale = Matrix.CreateScale(1.1f);
+            else if (Keyboard.GetState().IsKeyDown(Keys.D2))
+                scale = Matrix.CreateScale(0.9f);
+        }
+
+        private void SwitchPlatformTexture()
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.Q))
+                platformTex = false;
+            else if (Keyboard.GetState().IsKeyDown(Keys.W))
+                platformTex = true;
+        }
+
+        private void SwitchFog()
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.F))
+            {
+                effect.Parameters["FogEnabled"].SetValue(true);
+                effectLoco.Parameters["FogEnabled"].SetValue(true);
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.G))
+            {
+                effect.Parameters["FogEnabled"].SetValue(false);
+                effectLoco.Parameters["FogEnabled"].SetValue(false);
+            }
+        }
+        float MipMapLevelOfDetailBias = 1f;
+        TextureFilter TextureFilter = TextureFilter.Point;
+        private void SwitchTextureFilter()
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.D3))
+                MipMapLevelOfDetailBias *= 0.99f;
+            else if (Keyboard.GetState().IsKeyDown(Keys.D4))
+                MipMapLevelOfDetailBias *= 1.01f;
+
+            if (MipMapLevelOfDetailBias > 8)
+                MipMapLevelOfDetailBias = 8;
+            else if (MipMapLevelOfDetailBias < 1)
+                MipMapLevelOfDetailBias = 1;
+
+            else if (Keyboard.GetState().IsKeyDown(Keys.D5))
+                TextureFilter = TextureFilter.Point;
+            else if (Keyboard.GetState().IsKeyDown(Keys.D6))
+                TextureFilter = TextureFilter.PointMipLinear;
+            else if (Keyboard.GetState().IsKeyDown(Keys.D7))
+                TextureFilter = TextureFilter.LinearMipPoint;
+            else if (Keyboard.GetState().IsKeyDown(Keys.D8))
+                TextureFilter = TextureFilter.Linear;
+        }
+
+        private void SwitchAntiAliasing()
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.N))
+            {
+                rasterizerState = new RasterizerState { MultiSampleAntiAlias = true };
+                graphics.PreferMultiSampling = true;
+                graphics.ApplyChanges();
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.M))
+            {
+                rasterizerState = new RasterizerState { MultiSampleAntiAlias = false };
+                graphics.PreferMultiSampling = false;
+                graphics.ApplyChanges();
+            }
+        }
+
+        RasterizerState rasterizerState = new RasterizerState { MultiSampleAntiAlias = true };
 
         Matrix textureMatrix;
 
@@ -266,18 +332,15 @@ namespace Game1
         protected void Draw(Camera camera)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            for (int i = 0; i < 12; i++)
+            var sampler = new SamplerState
             {
-                graphics.GraphicsDevice.SamplerStates[i] = new SamplerState
-                {
-                    MipMapLevelOfDetailBias = 0.001f,
-                    MaxMipLevel = 8,
-                    Filter = TextureFilter.Linear,
-                };
-            }
+                MipMapLevelOfDetailBias = MipMapLevelOfDetailBias,
+                MaxMipLevel = 8,
+                Filter = TextureFilter,
+            };
+            graphics.GraphicsDevice.SamplerStates[0] = sampler;
 
-            RasterizerState rasterizerState1 = new RasterizerState { MultiSampleAntiAlias = true, };
-            graphics.GraphicsDevice.RasterizerState = rasterizerState1;
+            graphics.GraphicsDevice.RasterizerState = rasterizerState;
 
 
             Effect effect;
