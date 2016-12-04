@@ -2,7 +2,7 @@
 
 namespace Game1
 {
-    class Locomotive : Item
+    class Locomotive : Robot
     {
         public Locomotive(Vector3 scale, Vector3 position, Vector3 rotation) : base(scale, position, rotation) { }
         public override void Update(GameTime gameTime)

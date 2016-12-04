@@ -10,15 +10,18 @@ namespace Game1.Models
 
         public Matrix WorldMatrix { get { return Matrix.CreateTranslation(Position); } }
 
-        public virtual void Draw(Effect effect, GraphicsDeviceManager graphics, Texture texture=null)
+        public virtual void Draw(Effect effect, GraphicsDeviceManager graphics, Texture texture=null, Texture texture2 = null)
         {
             if (texture != null)
             {
                 effect.Parameters["TextureEnabled"].SetValue(true);
-                effect.Parameters["BasicTexture"].SetValue(texture);
+                effect.Parameters["BasicTextureA"].SetValue(texture);
+                effect.Parameters["BasicTextureB"].SetValue(texture2);
             }
             else
                 effect.Parameters["TextureEnabled"].SetValue(false);
+
+
 
             foreach (var pass in effect.CurrentTechnique.Passes)
             {

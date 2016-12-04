@@ -16,6 +16,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -26,6 +27,7 @@
     <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -35,6 +37,7 @@
     <DefineConstants>TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
@@ -49,7 +52,8 @@
     <Compile Include="Models\CustomModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Item.cs" />
+    <Compile Include="Robot.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AssimpNet, Version=3.3.1.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
@@ -61,12 +65,21 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
+    <Reference Include="TeximpNet, Version=1.0.0.0, Culture=neutral, PublicKeyToken=093b3e17442f49dd, processorArchitecture=MSIL">
+      <HintPath>..\packages\TeximpNet.1.0.0\lib\net45\TeximpNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Effects\Specular2.fx" />
     <Content Include="Content\Effects\Specular.fx" />
     <Content Include="Content\Effects\Ambient.fx" />
     <Content Include="Content\Effects\Diffuse.fx" />
+    <Content Include="Content\Sunset.dds" />
+    <Content Include="Content\tex1.png" />
+    <Content Include="Content\tex2.png" />
+    <Content Include="Content\tex2b.png" />
+    <Content Include="Content\tex3.jpg" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +88,7 @@
     </MonoGameContentReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Content\bench.fbx" />
     <None Include="Content\locomotive.fbx" />
     <None Include="Content\witcher.fbx" />
@@ -88,7 +102,9 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\AssimpNet.3.3.1\build\AssimpNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AssimpNet.3.3.1\build\AssimpNet.targets'))" />
+    <Error Condition="!Exists('..\packages\TeximpNet.1.0.0\build\TeximpNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\TeximpNet.1.0.0\build\TeximpNet.targets'))" />
   </Target>
+  <Import Project="..\packages\TeximpNet.1.0.0\build\TeximpNet.targets" Condition="Exists('..\packages\TeximpNet.1.0.0\build\TeximpNet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

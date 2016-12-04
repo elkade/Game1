@@ -31,14 +31,26 @@ float FogStart = 0;
 float FogEnd = 100;
 float3 FogColor = float3(1, 1, 1);
 
+float4x4 pView;
+float4x4 pProjection;
+float4x4 TextureTransform;
 
-texture BasicTexture;
+texture BasicTextureA;
+texture BasicTextureB;
+texture ProjectionTexture;
 
-sampler BasicTextureSampler = sampler_state {
-	texture = <BasicTexture>;
+sampler BasicTextureSamplerA = sampler_state {
+	texture = <BasicTextureA>;
 };
-
+sampler BasicTextureSamplerB = sampler_state {
+	texture = <BasicTextureB>;
+};
+sampler ProjectionTextureSampler = sampler_state {
+	texture = <ProjectionTexture>;
+};
 bool TextureEnabled = false;
+
+bool ProjectionTextureEnabled = true;
 
 struct VertexShaderInput
 {
@@ -52,17 +64,37 @@ struct VertexShaderOutput
   float3 Normal : TEXCOORD1;
   float4 WorldPosition : TEXCOORD2;
   float2 UV : TEXCOORD0;
+  float2 UVProj : TEXCOORD3;
 };
+
+bool SkyBoxEnabled = true;
+Texture SkyBoxTexture;
+samplerCUBE SkyBoxSampler = sampler_state
+{
+	texture = <SkyBoxTexture>;
+	magfilter = LINEAR;
+	minfilter = LINEAR;
+	mipfilter = LINEAR;
+	AddressU = Mirror;
+	AddressV = Mirror;
+};
+
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
-  VertexShaderOutput output;
-  
-  float4 worldPosition = mul(input.Position, World);
-  float4 viewPosition = mul(worldPosition, View);
-  output.Position = mul(viewPosition, Projection);
+	VertexShaderOutput output;
 
-  output.UV = input.UV;
+	float4 worldPosition = mul(input.Position, World);
+	float4 viewPosition = mul(worldPosition, View);
+	output.Position = mul(viewPosition, Projection);
+	//float4 transformedUV = input.Position;
+	float4 pWorldPosition = mul(input.Position, World);
+	float4 pViewPosition = mul(pWorldPosition, pView);
+	float4 pUV = mul(pViewPosition, pProjection);
+	output.UVProj = mul(pUV, TextureTransform);
+	output.UV = input.UV;
+
+	//output.TextureCoordinate = input.TextureCoordinate;
 
   output.WorldPosition = worldPosition;
   output.Normal = mul(input.Normal, World);
@@ -73,8 +105,16 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
 	if (TextureEnabled) {
-		SurfaceColor = tex2D(BasicTextureSampler, input.UV).rgb;
+		float4 texA = tex2D(BasicTextureSamplerA, input.UV).rgba;
+		float4 texB = tex2D(BasicTextureSamplerB, input.UV).rgba;
+		SurfaceColor = texA *(1- texB[3]) + texB * texB[3];
 	}
+	 
+//if (SkyBoxEnabled) {
+//
+//	SurfaceColor = texCUBE(SkyBoxSampler, input.TextureCoordinate);
+//
+//}
   float3 totalLight = AmbientColor * AmbientIntensity;
   for (int i = 0; i < POINT_LIGHTS_NUM; i++)
   {
@@ -95,7 +135,11 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
 
 	  float diffuse = saturate(dot(normalize(input.Normal), lightDir));
+	  if (ProjectionTextureEnabled && i == 0) {
+	  totalLight += diffuse * att * SurfaceColor * tex2D(ProjectionTextureSampler, input.UVProj).rgba * spot * DiffuseIntensity;
 
+	}
+else
 	  totalLight += diffuse * att * SurfaceColor * DiffuseColor[i] * spot * DiffuseIntensity;
 
 	  float specular = pow(saturate(dot(refl, viewDir)), SpecularPower);

@@ -46,6 +46,10 @@ struct VertexShaderOutput
   float4 WorldPosition : TEXCOORD2;
 };
 
+float4x4 pView;
+float4x4 pProjection;
+float4x4 TextureTransform;
+
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
   VertexShaderOutput output;
@@ -63,7 +67,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
   float3 totalLight = AmbientColor * AmbientIntensity;
-  for (int i = 0; i < POINT_LIGHTS_NUM; i++)
+  for (int i = 1; i < 2; i++)
   {
 	  float d = distance(LightPosition[i], input.WorldPosition);
 	  float att = 1 - pow(clamp(d / LightAttenuation, 0, 1), LightFalloff);

@@ -13,6 +13,8 @@ namespace Game1.Models
 
             size /= 2;
 
+            float sizeT = 5f;
+
             Vector3 topLeftFront = position + new Vector3(-1.0f, 1.0f, -1.0f) * size;
             Vector3 topLeftBack = position + new Vector3(-1.0f, 1.0f, 1.0f) * size;
             Vector3 topRightFront = position + new Vector3(1.0f, 1.0f, -1.0f) * size;
@@ -30,10 +32,10 @@ namespace Game1.Models
             Vector3 normalLeft = new Vector3(1.0f, 0.0f, 0.0f);
             Vector3 normalRight = new Vector3(-1.0f, 0.0f, 0.0f);
 
-            Vector2 textureTopLeft = new Vector2(1.0f * size, 0.0f * size);
-            Vector2 textureTopRight = new Vector2(0.0f * size, 0.0f * size);
-            Vector2 textureBottomLeft = new Vector2(1.0f * size, 1.0f * size);
-            Vector2 textureBottomRight = new Vector2(0.0f * size, 1.0f * size);
+            Vector2 textureTopLeft = new Vector2(1.0f * sizeT, 0.0f * sizeT);
+            Vector2 textureTopRight = new Vector2(0.0f * sizeT, 0.0f * sizeT);
+            Vector2 textureBottomLeft = new Vector2(1.0f * sizeT, 1.0f * sizeT);
+            Vector2 textureBottomRight = new Vector2(0.0f * sizeT, 1.0f * sizeT);
 
             Vertices[0] = new VertexPositionNormalTexture(topLeftFront, normalFront, textureTopLeft);
             Vertices[1] = new VertexPositionNormalTexture(btmLeftFront, normalFront, textureBottomLeft);
