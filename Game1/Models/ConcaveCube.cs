@@ -16,7 +16,7 @@ namespace Game1.Models
 
             size /= 2;
 
-            int n = 64;
+            int n = 1;
 
             Vector3 topLeftFront = position + new Vector3(-1.0f, 1.0f, -1.0f) * size;
             Vector3 topLeftBack = position + new Vector3(-1.0f, 1.0f, 1.0f) * size;
@@ -40,10 +40,11 @@ namespace Game1.Models
 
         private IEnumerable<VertexPositionNormalTexture> GetWall(Vector3 btmLeft, Vector3 topLeft, Vector3 topRight, Vector3 btmRight, int n, int size)
         {
-            Vector2 textureTopLeft = Vector2.Zero;//= new Vector2(1.0f * size, 0.0f * size);
-            Vector2 textureTopRight = Vector2.Zero;// = new Vector2(0.0f * size, 0.0f * size);
-            Vector2 textureBottomLeft = Vector2.Zero;// = new Vector2(1.0f * size, 1.0f * size);
-            Vector2 textureBottomRight = Vector2.Zero;// = new Vector2(0.0f * size, 1.0f * size);
+            var sizeT = 1f;
+            Vector2 textureTopLeft = new Vector2(1.0f * sizeT, 0.0f * sizeT);
+            Vector2 textureTopRight = new Vector2(0.0f * sizeT, 0.0f * sizeT);
+            Vector2 textureBottomLeft = new Vector2(1.0f * sizeT, 1.0f * sizeT);
+            Vector2 textureBottomRight = new Vector2(0.0f * sizeT, 1.0f * sizeT);
 
 
             Vector3 middle = (btmLeft + topLeft + topRight + btmRight) / 4;

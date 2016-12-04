@@ -21,6 +21,7 @@ namespace Game1
         Robot locomotive;
 
         Camera camera;
+        Camera camera2;
 
         Effect effect;
         Effect effectLoco;
@@ -44,6 +45,13 @@ namespace Game1
 
         SpriteBatch spriteBatch;
 
+        RenderTarget2D mainRenderTarget;
+        RenderTarget2D screenRenderTarget;
+
+        Texture2D recentScreen;
+
+        CustomModel screen;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -62,6 +70,7 @@ namespace Game1
         {
             walls = new ConcaveCube(new Vector3(0, 0, 0), 32);
             platform = new ConvexCube(new Vector3(5, -15, 0), 32);
+            screen = new Screen(new Vector3(0, 7, 15.5f), 12, 8);
 
 
             robot = new Robot(4f, new Vector3(7, -10, 7), Vector3.Zero);
@@ -84,6 +93,16 @@ namespace Game1
             locomotive.Color = Color.SaddleBrown;
 
             camera = new Camera(graphics.GraphicsDevice);
+            camera2 = new Camera(graphics.GraphicsDevice)
+            {
+                Position = new Vector3(20, -5.600631f, -18.18444f),
+                RotationMatrix = new Matrix(
+                    new Vector4(0.8854502f, 0, 0.4647342f, 0),
+                    new Vector4(0.07709774f, 0.9861432f, -0.146893f, 0),
+                    new Vector4(-0.4582944f, 0.1658964f, 0.8731807f, 0),
+                    new Vector4(0, 0, 0, 1)
+                )
+            };
 
             texture = Content.Load<Texture2D>("Textures/tex1");
             texture2 = Content.Load<Texture2D>("Textures/tex2");
@@ -100,7 +119,7 @@ namespace Game1
             effect.Parameters["ProjectionTexture"].SetValue(texture3);
 
 
-            ceilingLight1 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Green, Position = new Vector3(0, 15, 8), Phi = MathHelper.PiOver4/2, Theta = MathHelper.PiOver4 /4 };
+            ceilingLight1 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Green, Position = new Vector3(0, 15, 8), Phi = MathHelper.PiOver4 / 2, Theta = MathHelper.PiOver4 / 4 };
             ceilingLight2 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Blue, Position = new Vector3(0, 15, -8), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4 / 2 };
             trainLight = new Light { DiffuseColor = Color.Yellow, SpecularColor = Color.Yellow, Position = Vector3.Zero, Direction = new Vector3(0, 0, -1), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4 / 2 };
             witcherLight = new Light { DiffuseColor = Color.Red, SpecularColor = Color.Red, Position = new Vector3(7, -5, 7), Direction = new Vector3(0, 0, -1), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4 / 2 };
@@ -123,7 +142,41 @@ namespace Game1
             skyBox = Content.Load<TextureCube>("Textures/OutputCube");
             //effect.Parameters["SkyBoxTexture"].SetValue(skyBox);
 
+            mainRenderTarget = new RenderTarget2D(
+                GraphicsDevice,
+                GraphicsDevice.PresentationParameters.BackBufferWidth,
+                GraphicsDevice.PresentationParameters.BackBufferHeight,
+                false,
+                GraphicsDevice.PresentationParameters.BackBufferFormat,
+                DepthFormat.Depth24);
+
+            screenRenderTarget = new RenderTarget2D(
+                GraphicsDevice,
+                GraphicsDevice.PresentationParameters.BackBufferWidth,
+                GraphicsDevice.PresentationParameters.BackBufferHeight,
+                false,
+                GraphicsDevice.PresentationParameters.BackBufferFormat,
+                DepthFormat.Depth24);
+
             base.Initialize();
+        }
+
+        /// <summary>
+        /// Draws the entire scene in the given render target.
+        /// </summary>
+        /// <returns>A texture2D with the scene drawn in it.</returns>
+        protected void DrawSceneToTexture(RenderTarget2D renderTarget, Camera camera)
+        {
+            // Set the render target
+            GraphicsDevice.SetRenderTarget(renderTarget);
+
+            GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
+
+            // Draw the scene
+            Draw(camera);
+
+            // Drop the render target
+            GraphicsDevice.SetRenderTarget(null);
         }
 
         private void SetParams(Effect effect)
@@ -158,13 +211,13 @@ namespace Game1
             camera.Update(gameTime);
 
             //cameraLight.Position = camera.Position;
-            trainLight.Position = locomotive.Position + new Vector3(0,0, 10);
+            trainLight.Position = locomotive.Position + new Vector3(0, 0, 10);
 
             UpdateWitcherLight(gameTime);
 
             UpdateParameters();
 
-            if(Keyboard.GetState().IsKeyDown(Keys.D1))
+            if (Keyboard.GetState().IsKeyDown(Keys.D1))
                 scale = Matrix.CreateScale(1.1f);
             else if (Keyboard.GetState().IsKeyDown(Keys.D2))
                 scale = Matrix.CreateScale(0.9f);
@@ -173,7 +226,7 @@ namespace Game1
             else if (Keyboard.GetState().IsKeyDown(Keys.W))
                 platformTex = true;
 
-            textureMatrix = textureMatrix * scale * Matrix.CreateRotationZ((float)gameTime.ElapsedGameTime.TotalSeconds * MathHelper.PiOver4/4);
+            textureMatrix = textureMatrix * scale * Matrix.CreateRotationZ((float)gameTime.ElapsedGameTime.TotalSeconds * MathHelper.PiOver4 / 4);
 
             scale = Matrix.CreateScale(1);
             effect.Parameters["TextureTransform"].SetValue(textureMatrix);
@@ -210,7 +263,7 @@ namespace Game1
             witcherLight.SpecularColor = col;
         }
 
-        protected override void Draw(GameTime gameTime)
+        protected void Draw(Camera camera)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             for (int i = 0; i < 12; i++)
@@ -223,16 +276,17 @@ namespace Game1
                 };
             }
 
-            RasterizerState rasterizerState1 = new RasterizerState { MultiSampleAntiAlias = true,  };
+            RasterizerState rasterizerState1 = new RasterizerState { MultiSampleAntiAlias = true, };
             graphics.GraphicsDevice.RasterizerState = rasterizerState1;
 
 
             Effect effect;
-            effect = lighting.UpdateEffect(walls.WorldMatrix, camera, Color.Gray);
-
-            walls.Draw(effect, graphics);
             effect = lighting.UpdateEffect(platform.WorldMatrix, camera, Color.DarkGray); //new Color(15,10,10));
-            platform.Draw(effect, graphics, texture, platformTex ? texture2b:texture2);
+
+            walls.Draw(effect, graphics, texture);
+            platform.Draw(effect, graphics, texture, platformTex ? texture2b : texture2);
+
+            screen.Draw(effect, graphics, recentScreen);
 
             locomotive.Draw(camera, lightingLoco);
 
@@ -242,8 +296,38 @@ namespace Game1
 
             bench1.Draw(camera, lighting);
 
+
+        }
+        protected override void Draw(GameTime gameTime)
+        {
+            DrawSceneToTexture(mainRenderTarget, camera);
+            DrawSceneToTexture(screenRenderTarget, camera2);
+
+            GraphicsDevice.Clear(Color.Black);
+
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+                        SamplerState.LinearClamp, DepthStencilState.Default,
+                        RasterizerState.CullNone);
+            ScreenToTexture();
+
+            spriteBatch.Draw(mainRenderTarget, new Rectangle(0, 0, GraphicsDevice.PresentationParameters.BackBufferWidth,
+                GraphicsDevice.PresentationParameters.BackBufferHeight), Color.White);
+
+            spriteBatch.End();
+
             base.Draw(gameTime);
         }
 
+        private void ScreenToTexture()
+        {
+            if (recentScreen != null)
+                recentScreen.Dispose();
+            recentScreen = new Texture2D(GraphicsDevice, GraphicsDevice.PresentationParameters.BackBufferWidth,
+                GraphicsDevice.PresentationParameters.BackBufferHeight);
+            Color[] content = new Color[GraphicsDevice.PresentationParameters.BackBufferWidth *
+                GraphicsDevice.PresentationParameters.BackBufferHeight];
+            screenRenderTarget.GetData(content);
+            recentScreen.SetData(content);
+        }
     }
 }

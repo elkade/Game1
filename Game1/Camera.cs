@@ -8,7 +8,7 @@ namespace Game1
     {
         GraphicsDevice graphicsDevice;
 
-        public Vector3 Position = new Vector3(0, 0, -20);
+        public Vector3 Position = new Vector3(0, 0, -15);
 
         public Matrix RotationMatrix;
 

@@ -49,6 +49,7 @@ sampler ProjectionTextureSampler = sampler_state {
 	texture = <ProjectionTexture>;
 };
 bool TextureEnabled = false;
+bool ScreenMode = false;
 
 bool ProjectionTextureEnabled = true;
 
@@ -135,12 +136,14 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
 
 	  float diffuse = saturate(dot(normalize(input.Normal), lightDir));
-	  if (ProjectionTextureEnabled && i == 0) {
-	  totalLight += diffuse * att * SurfaceColor * tex2D(ProjectionTextureSampler, input.UVProj).rgba * spot * DiffuseIntensity;
+	
 
-	}
-else
-	  totalLight += diffuse * att * SurfaceColor * DiffuseColor[i] * spot * DiffuseIntensity;
+float3 col = DiffuseColor[i];
+
+if (ProjectionTextureEnabled && i == 0) col = tex2D(ProjectionTextureSampler, input.UVProj).rgba;
+if(ScreenMode) col = saturate( tex2D(BasicTextureSamplerA, input.UV).rgba + col);
+
+	  totalLight += diffuse * att * SurfaceColor * col * spot * DiffuseIntensity;
 
 	  float specular = pow(saturate(dot(refl, viewDir)), SpecularPower);
 
