@@ -15,8 +15,9 @@ namespace Game1.Models
             if (texture != null)
             {
                 effect.Parameters["TextureEnabled"].SetValue(true);
-                effect.Parameters["BasicTextureA"].SetValue(texture);
                 effect.Parameters["BasicTextureB"].SetValue(texture2);
+                effect.Parameters["BasicTextureA"].SetValue(texture);
+
             }
             else
                 effect.Parameters["TextureEnabled"].SetValue(false);

@@ -335,6 +335,8 @@ namespace Game1
                 Filter = TextureFilter,
             };
             graphics.GraphicsDevice.SamplerStates[0] = sampler;
+            graphics.GraphicsDevice.SamplerStates[1] = sampler;
+            graphics.GraphicsDevice.SamplerStates[2] = sampler;
 
             graphics.GraphicsDevice.RasterizerState = rasterizerState;
 
@@ -349,9 +351,9 @@ namespace Game1
 
             locomotive.Draw(camera, lightingLoco);
 
-            effect.Parameters["SkyBoxEnabled"].SetValue(true);
+            //effect.Parameters["SkyBoxEnabled"].SetValue(true);
             robot.Draw(camera, lighting);
-            effect.Parameters["SkyBoxEnabled"].SetValue(false);
+            //effect.Parameters["SkyBoxEnabled"].SetValue(false);
 
             bench2.Draw(camera, lighting);
 

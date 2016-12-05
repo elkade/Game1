@@ -69,7 +69,8 @@ struct VertexShaderOutput
 };
 
 bool SkyBoxEnabled = false;
-Texture SkyBoxTexture;
+
+textureCUBE SkyBoxTexture;
 samplerCUBE SkyBoxSampler = sampler_state
 {
 	texture = <SkyBoxTexture>;
