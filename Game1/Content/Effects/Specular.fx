@@ -41,8 +41,6 @@ texture ProjectionTexture;
 
 sampler BasicTextureSamplerA = sampler_state {
 	texture = <BasicTextureA>;
-	AddressU = Wrap;
-	AddressV = Wrap;
 };
 sampler BasicTextureSamplerB = sampler_state {
 	texture = <BasicTextureB>;

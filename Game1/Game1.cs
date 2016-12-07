@@ -338,6 +338,7 @@ namespace Game1
             graphics.GraphicsDevice.SamplerStates[0] = sampler;
             graphics.GraphicsDevice.SamplerStates[1] = sampler;
             graphics.GraphicsDevice.SamplerStates[2] = sampler;
+            graphics.GraphicsDevice.SamplerStates[3] = sampler;
 
             graphics.GraphicsDevice.RasterizerState = rasterizerState;
 
@@ -396,7 +397,7 @@ namespace Game1
         }
         public TextureCube PreparePerlin(int size)
         {
-            TextureCube tc = new TextureCube(GraphicsDevice, size, false, SurfaceFormat.Color);
+            TextureCube tc = new TextureCube(GraphicsDevice, size, true, SurfaceFormat.Color);
 
             double[,] perlin = new double[size, size];
             Color[] col = new Color[size * size];
