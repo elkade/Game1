@@ -40,6 +40,8 @@ namespace Game1
         Texture2D texture2;
         Texture2D texture2b;
         Texture2D texture3;
+        Texture2D texture4;
+        TextureCube perlin;
 
         TextureCube skyBox;
 
@@ -106,6 +108,7 @@ namespace Game1
             texture2 = Content.Load<Texture2D>("Textures/tex2");
             texture2b = Content.Load<Texture2D>("Textures/tex2b");
             texture3 = Content.Load<Texture2D>("Textures/tex3");
+            texture4 = Content.Load<Texture2D>("Textures/tex4");
 
             effect = Content.Load<Effect>("Effects/Specular");
             effectLoco = Content.Load<Effect>("Effects/Specular2");
@@ -118,7 +121,7 @@ namespace Game1
 
 
             ceilingLight1 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Green, Position = new Vector3(0, 15, 8), Phi = MathHelper.PiOver4 / 2, Theta = MathHelper.PiOver4 / 4 };
-            ceilingLight2 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Blue, Position = new Vector3(0, 15, -8), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4 / 2 };
+            ceilingLight2 = new Light { DiffuseColor = Color.LightYellow, SpecularColor = Color.Blue, Position = new Vector3(0, 15, -8), Phi = MathHelper.PiOver2, Theta = MathHelper.PiOver4 };
             trainLight = new Light { DiffuseColor = Color.Yellow, SpecularColor = Color.Yellow, Position = Vector3.Zero, Direction = new Vector3(0, 0, -1), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4 / 2 };
             witcherLight = new Light { DiffuseColor = Color.Red, SpecularColor = Color.Red, Position = new Vector3(7, -5, 7), Direction = new Vector3(0, 0, -1), Phi = MathHelper.PiOver4, Theta = MathHelper.PiOver4 / 2 };
             lighting = new Lighting(effect, ceilingLight1, ceilingLight2, trainLight, witcherLight);
@@ -136,10 +139,6 @@ namespace Game1
             basicEffect.FogEnd = 30;
 
             bench1.Texture = texture;
-            robot.Texture = texture2;
-
-            skyBox = Content.Load<TextureCube>("Textures/OutputCube");
-            //effect.Parameters["SkyBoxTexture"].SetValue(skyBox);
 
             mainRenderTarget = new RenderTarget2D(
                 GraphicsDevice,
@@ -156,6 +155,8 @@ namespace Game1
                 false,
                 GraphicsDevice.PresentationParameters.BackBufferFormat,
                 DepthFormat.Depth24);
+
+            perlin = PreparePerlin(1000);
 
             base.Initialize();
         }
@@ -344,16 +345,17 @@ namespace Game1
             Effect effect;
             effect = lighting.UpdateEffect(platform.WorldMatrix, camera, Color.DarkGray); //new Color(15,10,10));
 
-            walls.Draw(effect, graphics, texture);
-            platform.Draw(effect, graphics, texture, platformTex ? texture2b : texture2);
+            //effect.Parameters["SkyBoxEnabled"].SetValue(true);
+
+            walls.Draw(effect, graphics,null,null, perlin);
+
+            platform.Draw(effect, graphics, platformTex?texture:texture4, texture2b);
 
             screen.Draw(effect, graphics, recentScreen);
 
             locomotive.Draw(camera, lightingLoco);
 
-            //effect.Parameters["SkyBoxEnabled"].SetValue(true);
             robot.Draw(camera, lighting);
-            //effect.Parameters["SkyBoxEnabled"].SetValue(false);
 
             bench2.Draw(camera, lighting);
 
@@ -391,6 +393,40 @@ namespace Game1
                 GraphicsDevice.PresentationParameters.BackBufferHeight];
             screenRenderTarget.GetData(content);
             recentScreen.SetData(content);
+        }
+        public TextureCube PreparePerlin(int size)
+        {
+            TextureCube tc = new TextureCube(GraphicsDevice, size, false, SurfaceFormat.Color);
+
+            double[,] perlin = new double[size, size];
+            Color[] col = new Color[size * size];
+            Random r = new Random();
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    perlin[i, j] = PerlinNoise.OctavePerlin((double)i / 20, (double)j / 20, 0, 9, 0.5);
+                    //http://www.upvector.com/?section=Tutorials&subsection=Intro%20to%20Procedural%20Textures
+                    perlin[i, j] = (1 + Math.Sin((i + perlin[i, j] / 2) * 50)) / 2;
+                }
+            }
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    col[i + j * size] = new Color((float)perlin[i, j], (float)perlin[i, j], (float)perlin[i, j]);
+                }
+            }
+            tc.SetData(CubeMapFace.PositiveX, col);
+            tc.SetData(CubeMapFace.NegativeX, col);
+            tc.SetData(CubeMapFace.PositiveY, col);
+            tc.SetData(CubeMapFace.NegativeY, col);
+            tc.SetData(CubeMapFace.PositiveZ, col);
+            tc.SetData(CubeMapFace.NegativeZ, col);
+
+            return tc;
         }
     }
 }

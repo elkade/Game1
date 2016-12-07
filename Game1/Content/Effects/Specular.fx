@@ -41,6 +41,8 @@ texture ProjectionTexture;
 
 sampler BasicTextureSamplerA = sampler_state {
 	texture = <BasicTextureA>;
+	AddressU = Wrap;
+	AddressV = Wrap;
 };
 sampler BasicTextureSamplerB = sampler_state {
 	texture = <BasicTextureB>;
@@ -53,6 +55,18 @@ bool ScreenMode = false;
 
 bool ProjectionTextureEnabled = true;
 
+bool SkyBoxEnabled = false;
+
+textureCUBE SkyBoxTexture;
+samplerCUBE SkyBoxSampler = sampler_state
+{
+	texture = <SkyBoxTexture>;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
+
+
 struct VertexShaderInput
 {
   float4 Position : POSITION0;
@@ -62,23 +76,10 @@ struct VertexShaderInput
 struct VertexShaderOutput
 {
   float4 Position : POSITION0;
-  float3 Normal : TEXCOORD1;
-  float4 WorldPosition : TEXCOORD2;
+  float3 Normal : NORMAL0;
+  float4 WorldPosition : TEXCOORD1;
   float3 UV : TEXCOORD0;
-  float2 UVProj : TEXCOORD3;
-};
-
-bool SkyBoxEnabled = false;
-
-textureCUBE SkyBoxTexture;
-samplerCUBE SkyBoxSampler = sampler_state
-{
-	texture = <SkyBoxTexture>;
-	magfilter = LINEAR;
-	minfilter = LINEAR;
-	mipfilter = LINEAR;
-	AddressU = Mirror;
-	AddressV = Mirror;
+  float2 UVProj : TEXCOORD2;
 };
 
 
@@ -96,7 +97,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	output.UVProj = mul(pUV, TextureTransform);
 	output.UV = input.UV;
 if (SkyBoxEnabled) {
-	output.UV = worldPosition - CameraPosition;
+	output.UV = input.UV;
 }
 	//output.TextureCoordinate = input.TextureCoordinate;
 
@@ -109,14 +110,15 @@ if (SkyBoxEnabled) {
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
 	if (TextureEnabled) {
-		float4 texA = tex2D(BasicTextureSamplerA, input.UV).rgba;
+		float4 texA;
+		if (SkyBoxEnabled)
+			texA = texCUBE(SkyBoxSampler, float4(input.UV, 1).xyw).rgba;
+		else
+			texA = tex2D(BasicTextureSamplerA, input.UV).rgba;
 		float4 texB = tex2D(BasicTextureSamplerB, input.UV).rgba;
 		SurfaceColor = texA *(1- texB[3]) + texB * texB[3];
 	}
 	 
-if (SkyBoxEnabled) {
-	return texCUBE(SkyBoxSampler, normalize(input.UV));
-}
   float3 totalLight = AmbientColor * AmbientIntensity;
   for (int i = 0; i < POINT_LIGHTS_NUM; i++)
   {

@@ -64,7 +64,7 @@ namespace Game1.Models
             Vertices[5] = new VertexPositionNormalTexture(topRightFront, normalFront, textureTopRight);
 
         }
-        public override void Draw(Effect effect, GraphicsDeviceManager graphics, Texture texture = null, Texture texture2 = null)
+        public override void Draw(Effect effect, GraphicsDeviceManager graphics, Texture texture = null, Texture texture2 = null, TextureCube text = null)
         {
             effect.Parameters["ScreenMode"].SetValue(true);
             base.Draw(effect, graphics, texture);

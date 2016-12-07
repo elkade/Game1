@@ -10,7 +10,7 @@ namespace Game1.Models
 
         public Matrix WorldMatrix { get { return Matrix.CreateTranslation(Position); } }
 
-        public virtual void Draw(Effect effect, GraphicsDeviceManager graphics, Texture texture=null, Texture texture2 = null)
+        public virtual void Draw(Effect effect, GraphicsDeviceManager graphics, Texture texture=null, Texture texture2 = null, TextureCube textureCube = null)
         {
             if (texture != null)
             {
@@ -21,7 +21,14 @@ namespace Game1.Models
             }
             else
                 effect.Parameters["TextureEnabled"].SetValue(false);
-
+            if (textureCube != null)
+            {
+                effect.Parameters["TextureEnabled"].SetValue(true);
+                effect.Parameters["SkyBoxEnabled"].SetValue(true);
+                effect.Parameters["SkyBoxTexture"].SetValue(textureCube);
+            }
+            else
+                effect.Parameters["SkyBoxEnabled"].SetValue(false);
 
 
             foreach (var pass in effect.CurrentTechnique.Passes)
